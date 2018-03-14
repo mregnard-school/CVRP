@@ -12,9 +12,10 @@ public class Solution {
 
     NeighbourStrategy neighbourStrategy;
 
-    public Solution(Set<Path> paths)
+    public Solution(Set<Path> paths, NeighbourStrategy neighbourStrategy)
     {
         this.paths = paths;
+        this.neighbourStrategy = neighbourStrategy;
         this.fitness = getFitness();
     }
 

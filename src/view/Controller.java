@@ -6,19 +6,36 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.ComboBox;
 import module.Algorithms.Algorithm;
 import module.Algorithms.SimulatedAnnealing;
+import module.Node;
 import module.NodeReader;
 import view.Objects.AlgoThreadObj;
 import view.Objects.AlgoObserver;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 
 public class Controller {
     AlgoThreadObj algoThreadObj;
     Thread algoThread;
     AlgoObserver algoObserver;
 
-    private void initializeAlgorithm(ActionEvent event, Algorithm algorithm)
+    private void initializeAlgorithm(ActionEvent event, Algorithm algorithm, List<Node> nodes)
     {
-        algorithm.initialize(NodeReader.getNodes("data/data01.txt"));
-        algoObserver = new AlgoObserver((Canvas)((ComboBox)event.getSource()).getScene().lookup("#mapCanvas"));
+        Canvas mapCanvas = (Canvas)((ComboBox)event.getSource()).getScene().lookup("#mapCanvas");
+        mapCanvas.prefHeight(600);
+        mapCanvas.prefWidth(600);
+        mapCanvas.setWidth(600);
+        mapCanvas.setHeight(600);
+        int maxWidth = nodes.stream().sorted((Node n1, Node n2) -> Integer.compare(n2.getPosition().getX(), n1.getPosition().getX())).findFirst().get().getPosition().getX();
+        int maxHeight = nodes.stream().sorted((Node n1, Node n2) -> Integer.compare(n2.getPosition().getY(), n1.getPosition().getY())).findFirst().get().getPosition().getY();
+        int minWidth = nodes.stream().sorted(Comparator.comparingInt(n -> n.getPosition().getX())).findFirst().get().getPosition().getX();
+        int minHeight = nodes.stream().sorted(Comparator.comparingInt(n -> n.getPosition().getY())).findFirst().get().getPosition().getY();
+        System.out.println(minWidth + "<" + maxWidth);
+        double widthMultiplier = (mapCanvas.getWidth()-40) / (maxWidth-minWidth);
+        double heightMultiplier = (mapCanvas.getHeight()-40) / (maxHeight-minHeight);
+        double smallestMultiplier = Math.min(widthMultiplier, heightMultiplier);
+        algoObserver = new AlgoObserver(mapCanvas, smallestMultiplier, minWidth*smallestMultiplier, minHeight*smallestMultiplier);
         algorithm.addObserver(algoObserver);
         algoThreadObj = new AlgoThreadObj(algorithm);
         algoThread = new Thread(algoThreadObj);
@@ -27,7 +44,8 @@ public class Controller {
     @FXML
     private void changeAlgorithm(ActionEvent event) {
         System.out.println("Initializing algorithm");
-        initializeAlgorithm(event, new SimulatedAnnealing());
+        List<Node> nodes = NodeReader.getNodes("data/data01.txt");
+        initializeAlgorithm(event, new SimulatedAnnealing(100, 0.8, 0.01, nodes), nodes);
     }
 
     @FXML

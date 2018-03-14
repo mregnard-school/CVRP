@@ -2,6 +2,7 @@ package module.Algorithms;
 
 import module.Node;
 import module.Path;
+import module.Solutions.FirstNeighbourhood;
 import module.Solutions.Solution;
 import module.utils.Seeder;
 
@@ -25,11 +26,9 @@ public class SimulatedAnnealing extends Algorithm {
     private double mu;
 
 
-    public SimulatedAnnealing(int maxStep, double initialAcceptance, double maxAcceptance) {
+    public SimulatedAnnealing(int maxStep, double initialAcceptance, double maxAcceptance, List<Node> paths) {
         //Create new Solution
-        Solution initialSolution = new Solution();
-        this.currentSolution = initialSolution;
-        this.bestSolution = currentSolution;
+        initialize(paths);
         steps = 0; //First iteration
         this.maxStep = maxStep;
         random = new Random(Seeder.SEED);
@@ -104,10 +103,34 @@ public class SimulatedAnnealing extends Algorithm {
                 bestSolution = currentSolution;
             }
         }
+
+        setChanged();
+        notifyObservers();
     }
 
     @Override
     public boolean hasNext() {
         return steps < maxStep;
+    }
+
+    @Override
+    public void initialize(List<Node> nodes) {
+        int maxCapacity = 100;
+        Set<Path> paths = new HashSet<>();
+        Path currentPath = new Path(maxCapacity);
+        for(Node node : nodes) {
+            if (!currentPath.canAddNode(node)) {
+                paths.add(currentPath);
+                currentPath = new Path(maxCapacity);
+                currentPath.addNode(node);
+            }
+            else
+            {
+                currentPath.addNode(node);
+            }
+
+        }
+        currentSolution = new Solution(paths, new FirstNeighbourhood());
+        bestSolution = currentSolution;
     }
 }

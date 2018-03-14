@@ -18,10 +18,7 @@ public class Path {
         return nodes;
     }
 
-    public boolean canAddNode(Node node)
-    {
-        return currentCapacity + node.getCapacity() > maxCapacity;
-    }
+    public boolean canAddNode(Node node) { return currentCapacity + node.getCapacity() < maxCapacity; }
 
     public boolean addNode(Node node)
     {

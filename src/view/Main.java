@@ -15,7 +15,6 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(root, 1024, 768));
 
         String css = this.getClass().getResource("../view/button.css").toExternalForm();
-        //((ScrollPane)primaryStage.getScene().lookup("#mailContent")).setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         primaryStage.getScene().getStylesheets().add(css);
 
         primaryStage.show();

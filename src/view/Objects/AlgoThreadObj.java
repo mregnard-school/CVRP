@@ -12,7 +12,6 @@ public class AlgoThreadObj implements Runnable {
 
     @Override
     public void run() {
-        System.out.println(Thread.currentThread().isInterrupted());
         while(!Thread.currentThread().isInterrupted() && algorithm.hasNext())
         {
             algorithm.next();
