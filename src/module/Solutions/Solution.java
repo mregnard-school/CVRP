@@ -18,7 +18,7 @@ public class Solution {
         return 0;
     }
 
-    public Set<Solution> getNextSolution()
+    public Set<Solution> getNextSolutions()
     {
         return neighbourStrategy.getNeighbourhood(this);
     }
