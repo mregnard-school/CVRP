@@ -1,0 +1,31 @@
+.rich-blue {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0,1,2,3;
+    -fx-background-radius: 3,2,2,2;
+    -fx-border-width: 1px;
+    -fx-border-color: grey;
+    -fx-padding:5px 5px 5px 5px !important;
+    -fx-font-size: 12px;
+    -fx-alignment: TOP-LEFT !important;
+    -fx-pref-width:284px;
+    -fx-pref-height:119px;
+    -fx-min-width:284px;
+    -fx-min-height:119px;
+    -fx-max-width:284px;
+    -fx-max-height:119px;
+}
+
+.rich-blue:hover {
+    -fx-background-color: #4682B4;
+    -fx-text-fill: white;
+
+}
+
+.rich-blue:pressed {
+    -fx-background-color:green;
+}
+
+
+.rich-blue Text {
+    -fx-effect: dropshadow( one-pass-box , rgba(0,0,0,0.8) , 0, 0.0 , 0 , 1);
+}

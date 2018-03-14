@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="view.Controller">
+  <children>
+    <BorderPane fx:id="grid" layoutX="0.0" layoutY="0.0" prefHeight="400.0" prefWidth="600.0">
+      <center>
+        <Canvas fx:id="mapCanvas" />
+      </center>
+      <top>
+        <HBox prefHeight="100.0" prefWidth="200.0">
+          <children>
+            <Button fx:id="playButton" mnemonicParsing="false" onAction="#playButtonClick" text="Play">
+              <HBox.margin>
+                <Insets right="5.0" />
+              </HBox.margin>
+            </Button>
+            <Button fx:id="stepButton" mnemonicParsing="false" onAction="#stepButtonClick" text="Step">
+              <HBox.margin>
+                <Insets right="5.0" />
+              </HBox.margin>
+            </Button>
+            <ComboBox fx:id="algoDropdown" value="Please select an algorithm" onAction="#changeAlgorithm">
+              <items>
+                <FXCollections fx:factory="observableArrayList">
+                  <String fx:value="Annealing algorithm" />
+                </FXCollections>
+              </items>
+            </ComboBox>
+          </children>
+        </HBox>
+      </top>
+    </BorderPane>
+  </children>
+</AnchorPane>

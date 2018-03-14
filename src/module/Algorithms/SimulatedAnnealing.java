@@ -1,10 +1,16 @@
 package module.Algorithms;
 
+import module.Node;
+import module.Path;
 import module.Solutions.Solution;
 import module.utils.Seeder;
 
 import java.util.Iterator;
 import java.util.Random;
+import java.util.Set;
+
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class SimulatedAnnealing extends Algorithm {

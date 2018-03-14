@@ -10,8 +10,13 @@ public class Solution {
     private Set<Path> paths;
     private long fitness;
 
-
     NeighbourStrategy neighbourStrategy;
+
+    public Solution(Set<Path> paths)
+    {
+        this.paths = paths;
+        this.fitness = getFitness();
+    }
 
     public long getFitness()
     {
@@ -29,5 +34,9 @@ public class Solution {
 
     public void setNeighbourStrategy(NeighbourStrategy neighbourStrategy) {
         this.neighbourStrategy = neighbourStrategy;
+    }
+
+    public Set<Path> getPaths() {
+        return paths;
     }
 }

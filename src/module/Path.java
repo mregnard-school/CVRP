@@ -18,16 +18,17 @@ public class Path {
         return nodes;
     }
 
-    public boolean canAddNode()
+    public boolean canAddNode(Node node)
     {
-        //verify capacity+
-        return true;
+        return currentCapacity + node.getCapacity() > maxCapacity;
     }
 
-    public boolean addNode()
+    public boolean addNode(Node node)
     {
-        //verify capacity+
-        return false;
+        if(!canAddNode(node)) {return false;}
+        nodes.add(node);
+        currentCapacity+= node.getCapacity();
+        return true;
     }
 
     public boolean replaceNode()
