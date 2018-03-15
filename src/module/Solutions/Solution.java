@@ -1,7 +1,5 @@
 package module.Solutions;
 
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import module.Path;
 
 import java.util.Set;
@@ -12,20 +10,17 @@ public class Solution {
 
     NeighbourStrategy neighbourStrategy;
 
-    public Solution(Set<Path> paths, NeighbourStrategy neighbourStrategy)
-    {
+    public Solution(Set<Path> paths, NeighbourStrategy neighbourStrategy) {
         this.paths = paths;
         this.neighbourStrategy = neighbourStrategy;
         this.fitness = getFitness();
     }
 
-    public long getFitness()
-    {
+    public long getFitness() {
         return 0;
     }
 
-    public Set<Solution> getNextSolutions()
-    {
+    public Set<Solution> getNextSolutions() {
         return neighbourStrategy.getNeighbourhood(this);
     }
 

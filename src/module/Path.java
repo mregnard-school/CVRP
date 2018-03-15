@@ -7,8 +7,7 @@ public class Path {
     int maxCapacity;
     int currentCapacity;
 
-    public Path(int maxCapacity)
-    {
+    public Path(int maxCapacity) {
         this.nodes = new LinkedHashSet<>();
         this.maxCapacity = maxCapacity;
         this.currentCapacity = 0;
@@ -18,24 +17,25 @@ public class Path {
         return nodes;
     }
 
-    public boolean canAddNode(Node node) { return currentCapacity + node.getCapacity() < maxCapacity; }
+    public boolean canAddNode(Node node) {
+        return currentCapacity + node.getCapacity() < maxCapacity;
+    }
 
-    public boolean addNode(Node node)
-    {
-        if(!canAddNode(node)) {return false;}
+    public boolean addNode(Node node) {
+        if (!canAddNode(node)) {
+            return false;
+        }
         nodes.add(node);
-        currentCapacity+= node.getCapacity();
+        currentCapacity += node.getCapacity();
         return true;
     }
 
-    public boolean replaceNode()
-    {
+    public boolean replaceNode() {
         //verify capacity+
         return true;
     }
 
-    public boolean removeNode()
-    {
+    public boolean removeNode() {
         //verify capacity+
         return true;
     }

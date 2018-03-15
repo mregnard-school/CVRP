@@ -8,9 +8,12 @@ public abstract class Algorithm extends Observable implements AlgorithmStrategy 
     protected Solution bestSolution;
     protected Solution currentSolution;
 
-    public Solution getCurrentSolution()
-    {
+    public Solution getCurrentSolution() {
         return currentSolution;
     }
 
+    @Override
+    public Solution getBestNeighbourhood() {
+        return bestSolution;
+    }
 }

@@ -1,7 +1,5 @@
 package module.Solutions;
 
-import module.Path;
-
 import java.util.Set;
 
 public interface NeighbourStrategy {

@@ -6,13 +6,7 @@ import module.Solutions.FirstNeighbourhood;
 import module.Solutions.Solution;
 import module.utils.Seeder;
 
-import java.util.Iterator;
-import java.util.Random;
-import java.util.Set;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class SimulatedAnnealing extends Algorithm {
 
@@ -23,8 +17,9 @@ public class SimulatedAnnealing extends Algorithm {
     private final double maxAcceptance;
     private double maxTemperature;
     private double currentTemperature;
-    private double mu;
+    private final double mu;
 
+    private final static int MAX_CAPACITY = 100;
 
     public SimulatedAnnealing(int maxStep, double initialAcceptance, double maxAcceptance, List<Node> paths) {
         //Create new Solution
@@ -58,7 +53,7 @@ public class SimulatedAnnealing extends Algorithm {
     }
 
     private double temparature() {
-        if (steps % maxTemperature == 0){
+        if (steps % maxTemperature == 0) {
             currentTemperature = currentTemperature * mu;
         }
         return currentTemperature;
@@ -72,11 +67,6 @@ public class SimulatedAnnealing extends Algorithm {
             iterator.next();
         }
         return iterator.next();
-    }
-
-    @Override
-    public Solution getBestNeighbourhood() {
-        return null;
     }
 
     private double acceptanceProbability(Solution first, Solution second, double temperature) {
@@ -115,20 +105,16 @@ public class SimulatedAnnealing extends Algorithm {
 
     @Override
     public void initialize(List<Node> nodes) {
-        int maxCapacity = 100;
         Set<Path> paths = new HashSet<>();
-        Path currentPath = new Path(maxCapacity);
-        for(Node node : nodes) {
+        Path currentPath = new Path(MAX_CAPACITY);
+        for (Node node : nodes) {
             if (!currentPath.canAddNode(node)) {
                 paths.add(currentPath);
-                currentPath = new Path(maxCapacity);
+                currentPath = new Path(MAX_CAPACITY);
+                currentPath.addNode(node);
+            } else {
                 currentPath.addNode(node);
             }
-            else
-            {
-                currentPath.addNode(node);
-            }
-
         }
         currentSolution = new Solution(paths, new FirstNeighbourhood());
         bestSolution = currentSolution;
