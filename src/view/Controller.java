@@ -8,6 +8,7 @@ import module.Algorithms.Algorithm;
 import module.Algorithms.SimulatedAnnealing;
 import module.Node;
 import module.NodeReader;
+import module.exceptions.ComparingException;
 import view.Objects.AlgoObserver;
 import view.Objects.AlgoThreadObj;
 
@@ -27,50 +28,52 @@ public class Controller {
         mapCanvas.setWidth(600);
         mapCanvas.setHeight(600);
 
-        // TODO: 15/03/2018 Change .get().getPosition.... by .orElseThrow(CutomExceptionCorrespondingToThisBehavion::new).getPosition()...
-        int maxWidth = nodes.stream()
-                .sorted((Node n1, Node n2) -> Integer.compare(n2.getPosition().getX(),
-                        n1.getPosition().getX()))
-                .findFirst()
-                .get()
-                .getPosition()
-                .getX();
+        try{
+            int maxWidth = nodes.stream()
+                    .max(Comparator.comparingInt(n -> n.getPosition().getX()))
+                    .orElseThrow(ComparingException::new)
+                    .getPosition()
+                    .getX();
 
-        int maxHeight = nodes.stream()
-                .sorted((Node n1, Node n2) -> Integer.compare(n2.getPosition().getY(),
-                        n1.getPosition().getY()))
-                .findFirst()
-                .get()
-                .getPosition()
-                .getY();
+            int maxHeight = nodes.stream()
+                    .max(Comparator.comparingInt(n -> n.getPosition().getY()))
+                    .orElseThrow(ComparingException::new)
+                    .getPosition()
+                    .getY();
 
-        int minWidth = nodes.stream()
-                .min(Comparator.comparingInt(n -> n.getPosition().getX()))
-                .get()
-                .getPosition()
-                .getX();
+            int minWidth = nodes.stream()
+                    .min(Comparator.comparingInt(n -> n.getPosition().getX()))
+                    .orElseThrow(ComparingException::new)
+                    .getPosition()
+                    .getX();
 
-        int minHeight = nodes.stream()
-                .min(Comparator.comparingInt(n -> n.getPosition().getY()))
-                .get()
-                .getPosition()
-                .getY();
+            int minHeight = nodes.stream()
+                    .min(Comparator.comparingInt(n -> n.getPosition().getY()))
+                    .orElseThrow(ComparingException::new)
+                    .getPosition()
+                    .getY();
 
-        System.out.println(minWidth + "<" + maxWidth);
 
-        double widthMultiplier = (mapCanvas.getWidth()-40) / (maxWidth-minWidth);
-        double heightMultiplier = (mapCanvas.getHeight()-40) / (maxHeight-minHeight);
-        double smallestMultiplier = Math.min(widthMultiplier, heightMultiplier);
 
-        algoObserver = new AlgoObserver(mapCanvas,
-                smallestMultiplier,
-                minWidth*smallestMultiplier,
-                minHeight*smallestMultiplier
-        );
+            System.out.println(minWidth + "<" + maxWidth);
 
-        algorithm.addObserver(algoObserver);
-        algoThreadObj = new AlgoThreadObj(algorithm);
-        algoThread = new Thread(algoThreadObj);
+            double widthMultiplier = (mapCanvas.getWidth()-40) / (maxWidth-minWidth);
+            double heightMultiplier = (mapCanvas.getHeight()-40) / (maxHeight-minHeight);
+            double smallestMultiplier = Math.min(widthMultiplier, heightMultiplier);
+
+            algoObserver = new AlgoObserver(mapCanvas,
+                    smallestMultiplier,
+                    minWidth*smallestMultiplier,
+                    minHeight*smallestMultiplier
+            );
+
+            algorithm.addObserver(algoObserver);
+            algoThreadObj = new AlgoThreadObj(algorithm);
+            algoThread = new Thread(algoThreadObj);
+        } catch (ComparingException e){
+            e.printStackTrace();
+        }
+
     }
 
     @FXML
