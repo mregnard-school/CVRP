@@ -8,12 +8,11 @@ import module.Algorithms.Algorithm;
 import module.Algorithms.SimulatedAnnealing;
 import module.Node;
 import module.NodeReader;
-import view.Objects.AlgoThreadObj;
 import view.Objects.AlgoObserver;
+import view.Objects.AlgoThreadObj;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 
 public class Controller {
     AlgoThreadObj algoThreadObj;
@@ -45,7 +44,7 @@ public class Controller {
     private void changeAlgorithm(ActionEvent event) {
         System.out.println("Initializing algorithm");
         List<Node> nodes = NodeReader.getNodes("data/data01.txt");
-        initializeAlgorithm(event, new SimulatedAnnealing(100, 0.8, 0.01, nodes), nodes);
+        initializeAlgorithm(event, new SimulatedAnnealing(2, 0.8, 0.01, nodes), nodes);
     }
 
     @FXML

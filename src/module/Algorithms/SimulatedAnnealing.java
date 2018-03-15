@@ -4,7 +4,7 @@ import module.Node;
 import module.Path;
 import module.Solutions.FirstNeighbourhood;
 import module.Solutions.Solution;
-import module.utils.Seeder;
+import module.utils.Helpers;
 
 import java.util.*;
 
@@ -26,7 +26,7 @@ public class SimulatedAnnealing extends Algorithm {
         initialize(paths);
         steps = 0; //First iteration
         this.maxStep = maxStep;
-        random = new Random(Seeder.SEED);
+        random = Helpers.random;
         this.initialAcceptance = initialAcceptance;
         this.maxAcceptance = maxAcceptance;
         mu = 0.95;
