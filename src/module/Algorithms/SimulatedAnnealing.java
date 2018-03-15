@@ -82,20 +82,22 @@ public class SimulatedAnnealing extends Algorithm {
 
     @Override
     public void next() {
-        steps++;
-        double temperature = temparature();
-        Set<Solution> neighbors = currentSolution.getNextSolutions();
-        Solution nextSolution = pickRandom(neighbors);
-        double probability = random.nextDouble();
-        if (acceptanceProbability(currentSolution, nextSolution, temperature) >= probability) {
-            currentSolution = nextSolution;
-            if (currentSolution.getFitness() > bestSolution.getFitness()) {
-                bestSolution = currentSolution;
+        if(hasNext()){
+            steps++;
+            double temperature = temparature();
+            Set<Solution> neighbors = currentSolution.getNextSolutions();
+            Solution nextSolution = pickRandom(neighbors);
+            double probability = random.nextDouble();
+            if (acceptanceProbability(currentSolution, nextSolution, temperature) >= probability) {
+                currentSolution = nextSolution;
+                if (currentSolution.getFitness() > bestSolution.getFitness()) {
+                    bestSolution = currentSolution;
+                }
             }
-        }
 
-        setChanged();
-        notifyObservers();
+            setChanged();
+            notifyObservers();
+        }
     }
 
     @Override
