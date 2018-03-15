@@ -26,15 +26,48 @@ public class Controller {
         mapCanvas.prefWidth(600);
         mapCanvas.setWidth(600);
         mapCanvas.setHeight(600);
-        int maxWidth = nodes.stream().sorted((Node n1, Node n2) -> Integer.compare(n2.getPosition().getX(), n1.getPosition().getX())).findFirst().get().getPosition().getX();
-        int maxHeight = nodes.stream().sorted((Node n1, Node n2) -> Integer.compare(n2.getPosition().getY(), n1.getPosition().getY())).findFirst().get().getPosition().getY();
-        int minWidth = nodes.stream().sorted(Comparator.comparingInt(n -> n.getPosition().getX())).findFirst().get().getPosition().getX();
-        int minHeight = nodes.stream().sorted(Comparator.comparingInt(n -> n.getPosition().getY())).findFirst().get().getPosition().getY();
+
+        // TODO: 15/03/2018 Change .get().getPosition.... by .orElseThrow(CutomExceptionCorrespondingToThisBehavion::new).getPosition()...
+        int maxWidth = nodes.stream()
+                .sorted((Node n1, Node n2) -> Integer.compare(n2.getPosition().getX(),
+                        n1.getPosition().getX()))
+                .findFirst()
+                .get()
+                .getPosition()
+                .getX();
+
+        int maxHeight = nodes.stream()
+                .sorted((Node n1, Node n2) -> Integer.compare(n2.getPosition().getY(),
+                        n1.getPosition().getY()))
+                .findFirst()
+                .get()
+                .getPosition()
+                .getY();
+
+        int minWidth = nodes.stream()
+                .min(Comparator.comparingInt(n -> n.getPosition().getX()))
+                .get()
+                .getPosition()
+                .getX();
+
+        int minHeight = nodes.stream()
+                .min(Comparator.comparingInt(n -> n.getPosition().getY()))
+                .get()
+                .getPosition()
+                .getY();
+
         System.out.println(minWidth + "<" + maxWidth);
+
         double widthMultiplier = (mapCanvas.getWidth()-40) / (maxWidth-minWidth);
         double heightMultiplier = (mapCanvas.getHeight()-40) / (maxHeight-minHeight);
         double smallestMultiplier = Math.min(widthMultiplier, heightMultiplier);
-        algoObserver = new AlgoObserver(mapCanvas, smallestMultiplier, minWidth*smallestMultiplier, minHeight*smallestMultiplier);
+
+        algoObserver = new AlgoObserver(mapCanvas,
+                smallestMultiplier,
+                minWidth*smallestMultiplier,
+                minHeight*smallestMultiplier
+        );
+
         algorithm.addObserver(algoObserver);
         algoThreadObj = new AlgoThreadObj(algorithm);
         algoThread = new Thread(algoThreadObj);
