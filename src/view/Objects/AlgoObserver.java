@@ -13,10 +13,10 @@ import java.util.Observer;
 import java.util.Random;
 
 public class AlgoObserver implements Observer {
-    Canvas canvas;
-    double multiplier;
-    double offsetX;
-    double offsetY;
+    private Canvas canvas;
+    private double multiplier; //To make all the dots fir in the biggest screen as possible
+    private double offsetX;
+    private double offsetY;
 
     public AlgoObserver(Canvas canvas, double multiplier, double offsetX, double offsetY)
     {
@@ -49,6 +49,7 @@ public class AlgoObserver implements Observer {
             Color c = colors.poll();
             gc.setFill(c);
             gc.setStroke(c);
+            // Setting the dots
             path.getNodes().forEach(node -> {
                 gc.fillOval(node.getPosition().getX()*multiplier - offsetX,
                         node.getPosition().getY()*multiplier - offsetY,
@@ -57,8 +58,9 @@ public class AlgoObserver implements Observer {
                 );
             });
 
+            // Setting the lines between the dots
             gc.beginPath();
-            path.getNodes().stream().skip(1).forEach(node -> {
+            path.getNodes().stream().forEach(node -> {
                 gc.lineTo(node.getPosition().getX()*multiplier - offsetX + (multiplier/2),
                         node.getPosition().getY()*multiplier - offsetY + (multiplier/2)
                 );
