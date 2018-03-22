@@ -108,11 +108,16 @@ public class SimulatedAnnealing extends Algorithm {
     @Override
     public void initialize(List<Node> nodes) {
         Set<Path> paths = new HashSet<>();
+        Node centralNode = nodes.get(0);
+
         Path currentPath = new Path(MAX_CAPACITY);
-        for (Node node : nodes) {
+        currentPath.addNode(centralNode);
+
+        for (Node node : nodes.subList(1, nodes.size()-1)) { // We skip the first node, as it's the central
             if (!currentPath.canAddNode(node)) {
                 paths.add(currentPath);
                 currentPath = new Path(MAX_CAPACITY);
+                currentPath.addNode(centralNode);
                 currentPath.addNode(node);
             } else {
                 currentPath.addNode(node);

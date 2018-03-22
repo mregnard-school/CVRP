@@ -4,13 +4,11 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import module.Algorithms.Algorithm;
+import module.Node;
 import module.Solutions.Solution;
 import module.utils.Helpers;
 
-import java.util.LinkedList;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.Random;
+import java.util.*;
 
 public class AlgoObserver implements Observer {
     private Canvas canvas;
@@ -49,8 +47,10 @@ public class AlgoObserver implements Observer {
             Color c = colors.poll();
             gc.setFill(c);
             gc.setStroke(c);
-            // Setting the dots
-            path.getNodes().forEach(node -> {
+            List<Node> nodes = new ArrayList<>();
+            nodes.addAll(path.getNodes());
+                    // Setting the dots
+            nodes.forEach(node -> {
                 gc.fillOval(node.getPosition().getX()*multiplier - offsetX,
                         node.getPosition().getY()*multiplier - offsetY,
                         multiplier,
@@ -59,12 +59,17 @@ public class AlgoObserver implements Observer {
             });
 
             // Setting the lines between the dots
+            // Just to have the last not from the foreach below
             gc.beginPath();
-            path.getNodes().stream().forEach(node -> {
+            nodes.forEach(node -> {
                 gc.lineTo(node.getPosition().getX()*multiplier - offsetX + (multiplier/2),
                         node.getPosition().getY()*multiplier - offsetY + (multiplier/2)
                 );
             });
+            // Link first dot to last dot
+            gc.lineTo(nodes.get(0).getPosition().getX()*multiplier - offsetX + (multiplier/2),
+                    nodes.get(0).getPosition().getY()*multiplier - offsetY + (multiplier/2)
+            );
             gc.stroke();
             gc.closePath();
         });
