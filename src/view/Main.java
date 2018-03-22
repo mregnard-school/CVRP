@@ -5,6 +5,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import module.Node;
+import module.Path;
+import module.Position;
+import module.Solutions.FirstNeighbourhood;
+import module.Solutions.Solution;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class Main extends Application {
 
@@ -24,7 +32,7 @@ public class Main extends Application {
     public static void main(String[] args) {
 
        launch(args);
-      /*  Path first = new Path();
+        Path first = new Path();
         Path second = new Path();
 
         Node n1 = new Node(new Position(0, 0), 0);
@@ -45,14 +53,13 @@ public class Main extends Application {
         System.out.println(first);
         System.out.println(second);
 
-        System.out.println("Swapping :");
-
-        Set<Map.Entry<Path, Path>> paths = PathSwapper.swapPath(first, second);
-        paths.forEach(entry -> {
-            System.out.println(entry.getKey());
-            System.out.println(entry.getValue());
-            System.out.println();
-        });*/
+        Set<Path> paths = new HashSet<>();
+        paths.add(first);
+        paths.add(second);
+        Solution solution = new Solution(paths, new FirstNeighbourhood());
+        solution.getNextSolutions().forEach(solution1 -> {
+            solution1.getPaths().forEach(System.out::println);
+        });
     }
 }
 
