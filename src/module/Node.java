@@ -26,4 +26,8 @@ public class Node {
         this.capacity = capacity;
     }
 
+    @Override
+    public String toString() {
+        return  "[" + position.getX() + ", " + position.getY() + ", " + capacity + "]";
+    }
 }
