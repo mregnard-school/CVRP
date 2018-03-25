@@ -17,10 +17,10 @@ public class PathSwapper {
 
         Set<Map.Entry<Path, Path>> paths = new HashSet<>();
         //Number of swaps is determined by taking the minimum -1.
-        int nbSwap = Math.min(nbNodesFirst, nbNodesSecond) - 1;
+        int nbSwap = Math.min(nbNodesFirst, nbNodesSecond) - 2;
 
-        for (int i = 0; i <= firstNodes.size()-nbSwap; i++) {
-            for (int j = 0; j <= secondNodes.size()-nbSwap; j++) {
+        for (int i = 1; i <= firstNodes.size()-nbSwap; i++) {
+            for (int j = 1; j <= secondNodes.size()-nbSwap; j++) {
                 LinkedHashSet<Node> firstCopy = new LinkedHashSet<>(firstNodes);
                 LinkedHashSet<Node> secondCopy = new LinkedHashSet<>(secondNodes);
 
