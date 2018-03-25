@@ -22,7 +22,7 @@ public class Solution {
         for(Path path : paths){
             double distance = path.getDistance();
             if(distance < 0 ){
-                return  -1;
+                return  Double.MAX_VALUE;
             } else {
                 fitness += distance;
             }

@@ -41,6 +41,10 @@ public class Path {
 
     public void addAllNodes(Collection<Node> nodes) {
         this.nodes.addAll(nodes);
+        recompute();
+    }
+
+    public void recompute(){
         currentCapacity = computeCapacity();
         distance = computeDistance();
     }

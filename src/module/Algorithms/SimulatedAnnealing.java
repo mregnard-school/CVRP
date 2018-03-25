@@ -73,7 +73,7 @@ public class SimulatedAnnealing extends Algorithm {
         double firstFitness = first.getFitness();
         double secondFitness = second.getFitness();
 
-        if (firstFitness > secondFitness) {
+        if (firstFitness < secondFitness) {
             return 1;
         }
 
@@ -90,7 +90,7 @@ public class SimulatedAnnealing extends Algorithm {
             double probability = random.nextDouble();
             if (acceptanceProbability(currentSolution, nextSolution, temperature) >= probability) {
                 currentSolution = nextSolution;
-                if (currentSolution.getFitness() > bestSolution.getFitness()) {
+                if (currentSolution.getFitness() < bestSolution.getFitness()) {
                     bestSolution = currentSolution;
                 }
             }
@@ -117,6 +117,7 @@ public class SimulatedAnnealing extends Algorithm {
 
         for (Node node : nodes.subList(1, nodes.size()-1)) { // We skip the first node, as it's the central
             if (!currentPath.canAddNode(node)) {
+                currentPath.recompute();
                 paths.add(currentPath);
                 currentPath = new Path(MAX_CAPACITY);
                 currentPath.addNode(centralNode);
