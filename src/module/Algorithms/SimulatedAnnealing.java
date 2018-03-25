@@ -128,5 +128,6 @@ public class SimulatedAnnealing extends Algorithm {
         }
         currentSolution = new Solution(paths, new FirstNeighbourhood());
         bestSolution = currentSolution;
+        System.out.println("Initial solution : " + bestSolution.getFitness());
     }
 }

@@ -30,7 +30,7 @@
             <ComboBox fx:id="algoDropdown" onAction="#changeAlgorithm" value="Please select an algorithm">
               <items>
                 <FXCollections fx:factory="observableArrayList">
-                  <String fx:value="Annealing algorithm" />
+                  <String fx:value="Simulated Annealing" />
                 </FXCollections>
               </items>
             </ComboBox>

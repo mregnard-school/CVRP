@@ -16,8 +16,7 @@ public class AlgoObserver implements Observer {
     private double offsetX;
     private double offsetY;
 
-    public AlgoObserver(Canvas canvas, double multiplier, double offsetX, double offsetY)
-    {
+    public AlgoObserver(Canvas canvas, double multiplier, double offsetX, double offsetY) {
         this.canvas = canvas;
         this.multiplier = multiplier;
         this.offsetX = offsetX;
@@ -25,7 +24,7 @@ public class AlgoObserver implements Observer {
     }
 
 
-    public void displaySolution(Solution solution){
+    public void displaySolution(Solution solution) {
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
         //Clearing previous canvas
@@ -37,10 +36,17 @@ public class AlgoObserver implements Observer {
         //Pool of colors for each path
         int nbPaths = solution.getPaths().size();
         for (int i = 0; i < nbPaths; i++) {
-            final int red = random.nextInt(255);
-            final int blue = random.nextInt(255);
-            final int green = random.nextInt(255);
+            int red;
+            int blue;
+            int green;
+
+            do {
+                red = random.nextInt(255);
+                blue = random.nextInt(255);
+                green = random.nextInt(255);
+            } while (red == 255 && blue == 255 && green == 255);
             colors.add(Color.rgb(red, green, blue));
+
         }
 
         solution.getPaths().forEach(path -> {
@@ -49,10 +55,10 @@ public class AlgoObserver implements Observer {
             gc.setStroke(c);
             List<Node> nodes = new ArrayList<>();
             nodes.addAll(path.getNodes());
-                    // Setting the dots
+            // Setting the dots
             nodes.forEach(node -> {
-                gc.fillOval(node.getPosition().getX()*multiplier - offsetX,
-                        node.getPosition().getY()*multiplier - offsetY,
+                gc.fillOval(node.getPosition().getX() * multiplier - offsetX,
+                        node.getPosition().getY() * multiplier - offsetY,
                         multiplier,
                         multiplier
                 );
@@ -62,13 +68,13 @@ public class AlgoObserver implements Observer {
             // Just to have the last not from the foreach below
             gc.beginPath();
             nodes.forEach(node -> {
-                gc.lineTo(node.getPosition().getX()*multiplier - offsetX + (multiplier/2),
-                        node.getPosition().getY()*multiplier - offsetY + (multiplier/2)
+                gc.lineTo(node.getPosition().getX() * multiplier - offsetX + (multiplier / 2),
+                        node.getPosition().getY() * multiplier - offsetY + (multiplier / 2)
                 );
             });
             // Link first dot to last dot
-            gc.lineTo(nodes.get(0).getPosition().getX()*multiplier - offsetX + (multiplier/2),
-                    nodes.get(0).getPosition().getY()*multiplier - offsetY + (multiplier/2)
+            gc.lineTo(nodes.get(0).getPosition().getX() * multiplier - offsetX + (multiplier / 2),
+                    nodes.get(0).getPosition().getY() * multiplier - offsetY + (multiplier / 2)
             );
             gc.stroke();
             gc.closePath();
@@ -77,9 +83,14 @@ public class AlgoObserver implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        Algorithm algo = (Algorithm)o;
-        Solution currentSolution = algo.getBestSolution();
+        Algorithm algo = (Algorithm) o;
+        Solution currentSolution = algo.getCurrentSolution();
 
         displaySolution(currentSolution);
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

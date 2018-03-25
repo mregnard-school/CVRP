@@ -5,19 +5,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import module.Node;
-import module.Path;
-import module.Position;
-import module.Solutions.FirstNeighbourhood;
-import module.Solutions.Solution;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class Main extends Application {
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         primaryStage.setTitle("Annealing Algo");
         primaryStage.setScene(new Scene(root, 1024, 768));
@@ -31,8 +23,8 @@ public class Main extends Application {
 
     public static void main(String[] args) {
 
-       launch(args);
-        Path first = new Path();
+        launch(args);
+        /*Path first = new Path();
         Path second = new Path();
 
         Node n1 = new Node(new Position(0, 0), 0);
@@ -59,7 +51,7 @@ public class Main extends Application {
         Solution solution = new Solution(paths, new FirstNeighbourhood());
         solution.getNextSolutions().forEach(solution1 -> {
             solution1.getPaths().forEach(System.out::println);
-        });
+        });*/
     }
 }
 
