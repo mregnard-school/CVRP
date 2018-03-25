@@ -1,5 +1,7 @@
 package module;
 
+import java.util.Objects;
+
 public class Position {
     int x;
     int y;
@@ -25,4 +27,27 @@ public class Position {
         this.y = y;
     }
 
+    public double getDistanceFrom(Position position){
+        return Math.hypot(this.getX()-position.getX(), this.getY()-position.getY());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getX(), getY());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null){
+            return false;
+        }
+        if(this == obj){
+            return true;
+        }
+        if(obj instanceof Position){
+            Position other = (Position) obj;
+            return this.getX() == other.getX() && this.getY() == other.getY();
+        }
+        return super.equals(obj);
+    }
 }

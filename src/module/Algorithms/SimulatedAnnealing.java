@@ -35,9 +35,9 @@ public class SimulatedAnnealing extends Algorithm {
 
     private void initializeTemperature() {
         Set<Solution> neighbours = currentSolution.getNextSolutions();
-        long delta = Long.MIN_VALUE;
+        double delta = Long.MIN_VALUE;
         for (Solution solution : neighbours) {
-            long delta_temp = solution.getFitness() - currentSolution.getFitness();
+            double delta_temp = solution.getFitness() - currentSolution.getFitness();
             if (delta_temp > delta) {
                 delta = delta_temp;
             }
@@ -70,8 +70,8 @@ public class SimulatedAnnealing extends Algorithm {
     }
 
     private double acceptanceProbability(Solution first, Solution second, double temperature) {
-        long firstFitness = first.getFitness();
-        long secondFitness = second.getFitness();
+        double firstFitness = first.getFitness();
+        double secondFitness = second.getFitness();
 
         if (firstFitness > secondFitness) {
             return 1;
@@ -94,6 +94,8 @@ public class SimulatedAnnealing extends Algorithm {
                     bestSolution = currentSolution;
                 }
             }
+
+            System.out.println(bestSolution.getFitness());
 
             setChanged();
             notifyObservers();

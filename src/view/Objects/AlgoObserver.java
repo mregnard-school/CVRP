@@ -78,7 +78,7 @@ public class AlgoObserver implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         Algorithm algo = (Algorithm)o;
-        Solution currentSolution = algo.getCurrentSolution();
+        Solution currentSolution = algo.getBestSolution();
 
         displaySolution(currentSolution);
     }

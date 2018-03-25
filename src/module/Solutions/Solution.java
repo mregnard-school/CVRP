@@ -6,18 +6,33 @@ import java.util.Set;
 
 public class Solution {
     private Set<Path> paths;
-    private long fitness;
+    private double fitness;
 
     NeighbourStrategy neighbourStrategy;
 
     public Solution(Set<Path> paths, NeighbourStrategy neighbourStrategy) {
         this.paths = paths;
         this.neighbourStrategy = neighbourStrategy;
-        this.fitness = getFitness();
+        this.fitness = computeFitness();
     }
 
-    public long getFitness() {
-        return 0;
+    private double computeFitness() {
+
+        double fitness = 0;
+        for(Path path : paths){
+            double distance = path.getDistance();
+            if(distance < 0 ){
+                return  -1;
+            } else {
+                fitness += distance;
+            }
+        }
+
+        return fitness;
+    }
+
+    public double getFitness() {
+        return fitness;
     }
 
     public Set<Solution> getNextSolutions() {
