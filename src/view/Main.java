@@ -5,10 +5,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import module.Node;
-import module.Path;
-import module.Position;
-import module.utils.PathSwapper;
 
 public class Main extends Application {
 
@@ -26,8 +22,8 @@ public class Main extends Application {
 
     public static void main(String[] args) {
 
-      //  launch(args);
-        Path first = new Path();
+       launch(args);
+      /*  Path first = new Path();
         Path second = new Path();
 
         Node n1 = new Node(new Position(0, 0), 0);
@@ -50,7 +46,8 @@ public class Main extends Application {
         System.out.println(second);
         System.out.println();
 
-        PathSwapper.swap2(first, second);
+        PathSwapper swapper = new PathSwapper(first, second);
+        swapper.swap();*/
     }
 }
 

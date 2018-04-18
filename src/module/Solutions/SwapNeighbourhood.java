@@ -6,7 +6,7 @@ import module.utils.PathSwapper;
 
 import java.util.*;
 
-public class FirstNeighbourhood implements NeighbourStrategy {
+public class SwapNeighbourhood implements NeighbourStrategy {
 
     private int firstIndex;
     private int secondIndex;
@@ -26,7 +26,7 @@ public class FirstNeighbourhood implements NeighbourStrategy {
         selectPaths();
 
         PathSwapper swapper = new PathSwapper(first, second);
-        Set<Map.Entry<Path, Path>> newPaths = swapper.swapPath();
+        Set<Map.Entry<Path, Path>> newPaths = swapper.swap();
         newPaths.forEach(entry -> createNewPaths(entry.getKey(), entry.getValue()));
 
         return nextSolutions;

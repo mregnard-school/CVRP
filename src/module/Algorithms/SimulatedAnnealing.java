@@ -2,7 +2,7 @@ package module.Algorithms;
 
 import module.Node;
 import module.Path;
-import module.Solutions.FirstNeighbourhood;
+import module.Solutions.SwapNeighbourhood;
 import module.Solutions.Solution;
 import module.utils.Helpers;
 
@@ -52,7 +52,7 @@ public class SimulatedAnnealing extends Algorithm {
                 currentPath.addNode(node);
             }
         }
-        currentSolution = new Solution(paths, new FirstNeighbourhood());
+        currentSolution = new Solution(paths, new SwapNeighbourhood());
         bestSolution = currentSolution;
         System.out.println("Initial solution : " + bestSolution.getFitness());
     }
