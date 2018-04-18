@@ -8,31 +8,33 @@ import java.util.stream.Collectors;
 
 public class PathSwapper {
 
-    public static Set<Map.Entry<Path, Path>> swapPath(Path first, Path second){
-        LinkedHashSet<Node> firstNodes = first.getNodes();
-        LinkedHashSet<Node> secondNodes = second.getNodes();
-        int nbNodesFirst = firstNodes.size();
-        int nbNodesSecond = secondNodes.size();
+    private LinkedHashSet<Node> firstNodes;
+    private LinkedHashSet<Node> secondNodes;
+    private int nbNodesInFirst;
+    private int nbNodesInSecond;
+    private int nbSwap;
 
+    Set<Map.Entry<Path, Path>> paths;
+    Set<Node> toSwapFromFirst;
+    Set<Node> toSwapFromSecond;
 
-        Set<Map.Entry<Path, Path>> paths = new HashSet<>();
-        //Number of swaps is determined by taking the minimum -1.
-        int nbSwap = Math.min(nbNodesFirst, nbNodesSecond) - 2;
+    public PathSwapper(Path first, Path second) {
+        firstNodes = first.getNodes();
+        secondNodes = second.getNodes();
+        nbNodesInFirst = firstNodes.size();
+        nbNodesInSecond = secondNodes.size();
+        paths = new HashSet<>();
+    }
 
-        for (int i = 1; i <= firstNodes.size()-nbSwap; i++) {
-            for (int j = 1; j <= secondNodes.size()-nbSwap; j++) {
+    public Set<Map.Entry<Path, Path>> swapPath() {
+        determineNumberbOfSwaps();
+
+        for (int i = 1; i <= nbNodesInFirst - nbSwap; i++) {
+            for (int j = 1; j <= nbNodesInSecond - nbSwap; j++) {
                 LinkedHashSet<Node> firstCopy = new LinkedHashSet<>(firstNodes);
                 LinkedHashSet<Node> secondCopy = new LinkedHashSet<>(secondNodes);
 
-                Set<Node> toSwapFromFirst = firstNodes.stream()
-                        .skip(i)
-                        .limit(nbSwap)
-                        .collect(Collectors.toSet());
-
-                Set<Node> toSwapFromSecond = secondNodes.stream()
-                        .skip(j)
-                        .limit(nbSwap)
-                        .collect(Collectors.toSet());
+               setOfNodesToSwapFromBoth(i, j);
 
                 //Swapping !
                 firstCopy.removeAll(toSwapFromFirst);
@@ -49,5 +51,28 @@ public class PathSwapper {
             }
         }
         return paths;
+    }
+
+    public void determineNumberbOfSwaps() {
+        nbSwap = Math.min(nbNodesInFirst, nbNodesInSecond) - 2;
+    }
+
+    public void setOfNodesToSwapFromBoth(int i, int j) {
+        setOfNodesToSwapFromFirst(i);
+        setOfNodesToSwapFromSecond(j);
+    }
+
+    public void setOfNodesToSwapFromFirst(int nbOfElementToSkip) {
+       toSwapFromFirst = firstNodes.stream()
+                .skip(nbOfElementToSkip)
+                .limit(nbSwap)
+                .collect(Collectors.toSet());
+    }
+
+    public void setOfNodesToSwapFromSecond(int nbOfElementToSkip) {
+       toSwapFromSecond = secondNodes.stream()
+                .skip(nbOfElementToSkip)
+                .limit(nbSwap)
+                .collect(Collectors.toSet());
     }
 }
