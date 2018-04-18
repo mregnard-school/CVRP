@@ -95,8 +95,6 @@ public class SimulatedAnnealing extends Algorithm {
                 }
             }
 
-            System.out.println(bestSolution.getFitness());
-
             setChanged();
             notifyObservers();
         }

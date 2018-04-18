@@ -15,10 +15,15 @@ public class AlgoThreadObj implements Runnable {
         while(!Thread.currentThread().isInterrupted() && algorithm.hasNext())
         {
             algorithm.next();
+           // System.out.println(algorithm.getBestSolution().getFitness());
         }
     }
 
     public Algorithm getAlgorithm() {
         return algorithm;
+    }
+
+    public void interrupt(){
+        Thread.currentThread().interrupt();
     }
 }

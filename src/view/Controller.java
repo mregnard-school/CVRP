@@ -94,10 +94,10 @@ public class Controller {
         // Button was clicked, do something...
         algoThreadObj.getAlgorithm().next();
     }
-    /*Platform.runLater(new Runnable() {
-        @Override public void run() {
-            labelConnection.setText("Connecting...");
-        }
-    });*/
+
+    public void interrupt() {
+        algoThreadObj.interrupt();
+        algoThread.interrupt();
+    }
 
 }
