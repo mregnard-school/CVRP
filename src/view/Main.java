@@ -43,6 +43,7 @@ public class Main extends Application {
 
         System.out.println(first);
         System.out.println(second);
+        System.out.println();
 
         Set<Path> paths = new HashSet<>();
         paths.add(first);

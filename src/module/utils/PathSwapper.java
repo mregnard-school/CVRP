@@ -27,7 +27,7 @@ public class PathSwapper {
     }
 
     public Set<Map.Entry<Path, Path>> swapPath() {
-        determineNumberbOfSwaps();
+        determineNumberOfSwaps();
 
         for (int i = 1; i <= nbNodesInFirst - nbSwap; i++) {
             for (int j = 1; j <= nbNodesInSecond - nbSwap; j++) {
@@ -53,7 +53,7 @@ public class PathSwapper {
         return paths;
     }
 
-    public void determineNumberbOfSwaps() {
+    public void determineNumberOfSwaps() {
         nbSwap = Math.min(nbNodesInFirst, nbNodesInSecond) - 2;
     }
 
