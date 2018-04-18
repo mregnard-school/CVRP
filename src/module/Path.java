@@ -76,36 +76,6 @@ public class Path {
         return this.distance;
     }
 
-    public void reorder() {
-        //Wrapper to easily change method if needed
-        reorderGreedy();
-    }
-
-    private void reorderGreedy() {
-        List<Node> greeded = new ArrayList<>();
-
-        for (Iterator<Node> iterator = greedyIterator(); iterator.hasNext(); ) {
-            greeded.add(iterator.next());
-        }
-
-        nodes = greeded;
-    }
-
-
-    Iterator<Node> greedyIterator() {
-        return new GreedyIterator(this, nodes.iterator().next());
-    }
-
-    public boolean replaceNode() {
-        //verify capacity+
-        return true;
-    }
-
-    public boolean removeNode() {
-        //verify capacity+
-        return true;
-    }
-
     @Override
     public String toString() {
         String string = "(";
@@ -115,7 +85,4 @@ public class Path {
         string += ")";
         return string;
     }
-
-
-
 }
