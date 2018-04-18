@@ -4,75 +4,69 @@ import module.Node;
 import module.Path;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class PathSwapper {
 
-    private LinkedHashSet<Node> firstNodes;
-    private LinkedHashSet<Node> secondNodes;
-    private int nbNodesInFirst;
-    private int nbNodesInSecond;
-    private int nbSwap;
-
+    private List<Node> firstNodes;
+    private List<Node> secondNodes;
     Set<Map.Entry<Path, Path>> paths;
-    Set<Node> toSwapFromFirst;
-    Set<Node> toSwapFromSecond;
 
     public PathSwapper(Path first, Path second) {
         firstNodes = first.getNodes();
         secondNodes = second.getNodes();
-        nbNodesInFirst = firstNodes.size();
-        nbNodesInSecond = secondNodes.size();
         paths = new HashSet<>();
     }
 
-    public Set<Map.Entry<Path, Path>> swapPath() {
-        determineNumberOfSwaps();
-
-        for (int i = 1; i <= nbNodesInFirst - nbSwap; i++) {
-            for (int j = 1; j <= nbNodesInSecond - nbSwap; j++) {
-                LinkedHashSet<Node> firstCopy = new LinkedHashSet<>(firstNodes);
-                LinkedHashSet<Node> secondCopy = new LinkedHashSet<>(secondNodes);
-
-               setOfNodesToSwapFromBoth(i, j);
-
-                //Swapping !
-                firstCopy.removeAll(toSwapFromFirst);
-                firstCopy.addAll(toSwapFromSecond);
-                secondCopy.removeAll(toSwapFromSecond);
-                secondCopy.addAll(toSwapFromFirst);
-
-                Path firstPath = new Path();
-                Path secondPath = new Path();
-                firstPath.addAllNodes(firstCopy);
-                secondPath.addAllNodes(secondCopy);
-
-                paths.add(new AbstractMap.SimpleEntry<>(firstPath, secondPath));
-            }
+    public Set<Map.Entry<Path, Path>> swap() {
+        int nbMaximumOfSwapsPossible = Math.min(firstNodes.size(), secondNodes.size()) - 1;
+        for (int i = 1; i <= nbMaximumOfSwapsPossible; i++) {
+            swapNElements(i);
         }
+
         return paths;
     }
 
-    public void determineNumberOfSwaps() {
-        nbSwap = Math.min(nbNodesInFirst, nbNodesInSecond) - 2;
+    private void swapNElements(int nbOfElementsToSwap) {
+        for (int i = 1; i <= firstNodes.size() - nbOfElementsToSwap; i++) {
+            for (int j = 1; j <= secondNodes.size() - nbOfElementsToSwap; j++) {
+               paths.add(swap(i, i + nbOfElementsToSwap, j, j + nbOfElementsToSwap));
+            }
+        }
     }
 
-    public void setOfNodesToSwapFromBoth(int i, int j) {
-        setOfNodesToSwapFromFirst(i);
-        setOfNodesToSwapFromSecond(j);
-    }
+    public Map.Entry<Path, Path> swap(int firstIndexToStart, int firstIndexToStop,
+                     int secondIndexToStart, int secondIndexToStop) {
 
-    public void setOfNodesToSwapFromFirst(int nbOfElementToSkip) {
-       toSwapFromFirst = firstNodes.stream()
-                .skip(nbOfElementToSkip)
-                .limit(nbSwap)
-                .collect(Collectors.toSet());
-    }
+        List<Node> firstNodesCopy = new ArrayList<>(firstNodes);
+        List<Node> secondNodesCopy = new ArrayList<>(secondNodes);
 
-    public void setOfNodesToSwapFromSecond(int nbOfElementToSkip) {
-       toSwapFromSecond = secondNodes.stream()
-                .skip(nbOfElementToSkip)
-                .limit(nbSwap)
-                .collect(Collectors.toSet());
+        LinkedList<Node> removedFromFirst = new LinkedList<>();
+        LinkedList<Node> removedFromSecond = new LinkedList<>();
+
+        for (int i = firstIndexToStart; i < firstIndexToStop; i++) {
+            Node removed = firstNodesCopy.remove(firstIndexToStart);
+            removedFromFirst.add(removed);
+        }
+
+        for (int i = secondIndexToStart; i < secondIndexToStop; i++) {
+            Node removed = secondNodesCopy.remove(secondIndexToStart);
+            removedFromSecond.add(removed);
+        }
+
+        for (int i = firstIndexToStart; i < firstIndexToStop; i++) {
+            firstNodesCopy.add(i, removedFromSecond.removeFirst());
+        }
+
+        for (int i = secondIndexToStart; i < secondIndexToStop; i++) {
+            secondNodesCopy.add(i, removedFromFirst.removeFirst());
+        }
+
+        Path first = new Path();
+        first.addAllNodes(firstNodesCopy);
+
+        Path second = new Path();
+        second.addAllNodes(secondNodesCopy);
+
+        return new AbstractMap.SimpleEntry<>(first, second);
     }
 }
