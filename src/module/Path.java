@@ -1,9 +1,6 @@
 package module;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import static java.util.stream.Collectors.joining;
 
@@ -102,5 +99,23 @@ public class Path {
                 .collect(joining(","));
         string += ")";
         return string;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof Path)) {
+            return false;
+        }
+
+        Path other = (Path) obj;
+        return this.getNodes().equals(other.getNodes());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getNodes());
     }
 }

@@ -26,16 +26,16 @@ public class PathSwapper {
         return paths;
     }
 
-    private void swapNElements(int nbOfElementsToSwap) {
+    public void swapNElements(int nbOfElementsToSwap) {
         for (int i = 1; i <= firstNodes.size() - nbOfElementsToSwap; i++) {
             for (int j = 1; j <= secondNodes.size() - nbOfElementsToSwap; j++) {
-               paths.add(swap(i, i + nbOfElementsToSwap, j, j + nbOfElementsToSwap));
+                paths.add(swap(i, i + nbOfElementsToSwap, j, j + nbOfElementsToSwap));
             }
         }
     }
 
-    public Map.Entry<Path, Path> swap(int firstIndexToStart, int firstIndexToStop,
-                     int secondIndexToStart, int secondIndexToStop) {
+    private Map.Entry<Path, Path> swap(int firstIndexToStart, int firstIndexToStop,
+                                       int secondIndexToStart, int secondIndexToStop) {
 
         List<Node> firstNodesCopy = new ArrayList<>(firstNodes);
         List<Node> secondNodesCopy = new ArrayList<>(secondNodes);
@@ -54,11 +54,19 @@ public class PathSwapper {
         }
 
         for (int i = firstIndexToStart; i < firstIndexToStop; i++) {
-            firstNodesCopy.add(i, removedFromSecond.removeFirst());
+            if (i < firstNodesCopy.size()) {
+                firstNodesCopy.add(i, removedFromSecond.removeFirst());
+            } else {
+                firstNodesCopy.add(removedFromSecond.removeFirst());
+            }
         }
 
         for (int i = secondIndexToStart; i < secondIndexToStop; i++) {
-            secondNodesCopy.add(i, removedFromFirst.removeFirst());
+            if (i < secondNodesCopy.size()) {
+                secondNodesCopy.add(i, removedFromFirst.removeFirst());
+            } else {
+                secondNodesCopy.add(removedFromFirst.removeFirst());
+            }
         }
 
         Path first = new Path();
@@ -68,5 +76,45 @@ public class PathSwapper {
         second.addAllNodes(secondNodesCopy);
 
         return new AbstractMap.SimpleEntry<>(first, second);
+    }
+
+    public Path swapSame(int firstIndexToStart, int firstIndexToStop, int secondIndexToStart, int secondIndexToStop) {
+        LinkedList<Node> firstSequence = new LinkedList<>();
+        LinkedList<Node> secondSequence = new LinkedList<>();
+
+        List<Node> nodeCopy = new ArrayList<>(firstNodes);
+        for (int i = firstIndexToStart; i < firstIndexToStop; i++) {
+            firstSequence.add(nodeCopy.get(i));
+        }
+
+        for (int i = secondIndexToStart; i < secondIndexToStop; i++) {
+            secondSequence.add(nodeCopy.get(i));
+        }
+
+        for (int i = firstIndexToStart; i < firstIndexToStop; i++) {
+            nodeCopy.remove(i);
+            nodeCopy.add(i, secondSequence.removeFirst());
+        }
+
+        for (int i = secondIndexToStart; i < secondIndexToStop; i++) {
+            nodeCopy.remove(i);
+            nodeCopy.add(i, firstSequence.removeFirst());
+        }
+
+        Path path = new Path();
+        path.addAllNodes(nodeCopy);
+        return path;
+    }
+
+    public Map.Entry<Path, Path> swap(int nbElementsToSwap, int firstIndex, int secondIndex) {
+
+        return swap(firstIndex,
+                firstIndex + nbElementsToSwap,
+                secondIndex,
+                secondIndex + nbElementsToSwap);
+    }
+
+    public Path swapSame(int nbElementToSwap, int firstIndex, int secondIndex) {
+        return swapSame(firstIndex, firstIndex + nbElementToSwap, secondIndex, secondIndex + nbElementToSwap);
     }
 }

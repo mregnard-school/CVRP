@@ -2,8 +2,9 @@ package module.Algorithms;
 
 import module.Node;
 import module.Path;
-import module.Solutions.SwapNeighbourhood;
+import module.Solutions.SimpleNeighbor;
 import module.Solutions.Solution;
+import module.Solutions.SwapNeighbourhood;
 import module.utils.Helpers;
 
 import java.util.*;
@@ -52,7 +53,7 @@ public class SimulatedAnnealing extends Algorithm {
                 currentPath.addNode(node);
             }
         }
-        currentSolution = new Solution(paths, new SwapNeighbourhood());
+        currentSolution = new Solution(paths, new SimpleNeighbor());
         bestSolution = currentSolution;
         System.out.println("Initial solution : " + bestSolution.getFitness());
     }
@@ -69,7 +70,9 @@ public class SimulatedAnnealing extends Algorithm {
     }
 
     private double calculateDelta() {
+        currentSolution.setNeighbourStrategy(new SwapNeighbourhood());
         Set<Solution> neighbours = currentSolution.getNextSolutions();
+        currentSolution.setNeighbourStrategy(new SimpleNeighbor());
         double delta = Long.MIN_VALUE;
         for (Solution solution : neighbours) {
             double delta_temp = solution.getFitness() - currentSolution.getFitness();

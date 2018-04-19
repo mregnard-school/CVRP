@@ -122,8 +122,12 @@ public class Controller {
     });*/
 
     public void interrupt() {
-        algoThreadObj.interrupt();
-        algoThread.interrupt();
+        if(algoThreadObj != null) {
+            algoThreadObj.interrupt();
+        }
+        if(algoThread != null) {
+            algoThread.interrupt();
+        }
     }
 
 }
