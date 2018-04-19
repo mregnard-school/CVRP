@@ -2,7 +2,7 @@ package module.Algorithms;
 
 import module.Node;
 import module.Path;
-import module.Solutions.FirstNeighbourhood;
+import module.Solutions.SwapNeighbourhood;
 import module.Solutions.Solution;
 import module.utils.Helpers;
 
@@ -33,7 +33,42 @@ public class SimulatedAnnealing extends Algorithm {
         initializeTemperature();
     }
 
+    @Override
+    public void initialize(List<Node> nodes) {
+        Set<Path> paths = new HashSet<>();
+        Node centralNode = nodes.get(0);
+
+        Path currentPath = new Path(MAX_CAPACITY);
+        currentPath.addNode(centralNode);
+
+        for (Node node : nodes.subList(1, nodes.size()-1)) { // We skip the first node, as it's the central
+            if (!currentPath.canAddNode(node)) {
+                currentPath.recompute();
+                paths.add(currentPath);
+                currentPath = new Path(MAX_CAPACITY);
+                currentPath.addNode(centralNode);
+                currentPath.addNode(node);
+            } else {
+                currentPath.addNode(node);
+            }
+        }
+        currentSolution = new Solution(paths, new SwapNeighbourhood());
+        bestSolution = currentSolution;
+        System.out.println("Initial solution : " + bestSolution.getFitness());
+    }
+
     private void initializeTemperature() {
+        double delta = calculateDelta();
+
+        double initialTemperature = (delta * (-1)) / Math.log(initialAcceptance);
+        maxTemperature = Math.log(
+                (delta * (-1)) / (initialTemperature * Math.log(maxAcceptance))
+        ) / Math.log(mu);
+
+        currentTemperature = initialTemperature;
+    }
+
+    private double calculateDelta() {
         Set<Solution> neighbours = currentSolution.getNextSolutions();
         double delta = Long.MIN_VALUE;
         for (Solution solution : neighbours) {
@@ -42,14 +77,32 @@ public class SimulatedAnnealing extends Algorithm {
                 delta = delta_temp;
             }
         }
-        //Delta now holds the maximum difference between the neighbourhood
+        return delta;
+    }
 
-        double initialTemperature = (delta * (-1)) / Math.log(initialAcceptance);
-        maxTemperature = Math.log(
-                (delta * (-1)) / (initialTemperature * Math.log(maxAcceptance))
-        ) / Math.log(mu);
+    @Override
+    public void next() {
+        if(hasNext()){
+            steps++;
+            double temperature = temparature();
+            Set<Solution> neighbors = currentSolution.getNextSolutions();
+            Solution nextSolution = pickRandom(neighbors);
+            double probability = random.nextDouble();
+            if (acceptanceProbability(currentSolution, nextSolution, temperature) >= probability) {
+                currentSolution = nextSolution;
+                if (currentSolution.getFitness() < bestSolution.getFitness()) {
+                    bestSolution = currentSolution;
+                }
+            }
 
-        currentTemperature = initialTemperature;
+            setChanged();
+            notifyObservers();
+        }
+    }
+
+    @Override
+    public boolean hasNext() {
+        return steps < maxStep;
     }
 
     private double temparature() {
@@ -80,54 +133,5 @@ public class SimulatedAnnealing extends Algorithm {
         return Math.exp(-(secondFitness - firstFitness) / temperature);
     }
 
-    @Override
-    public void next() {
-        if(hasNext()){
-            steps++;
-            double temperature = temparature();
-            Set<Solution> neighbors = currentSolution.getNextSolutions();
-            Solution nextSolution = pickRandom(neighbors);
-            double probability = random.nextDouble();
-            if (acceptanceProbability(currentSolution, nextSolution, temperature) >= probability) {
-                currentSolution = nextSolution;
-                if (currentSolution.getFitness() < bestSolution.getFitness()) {
-                    bestSolution = currentSolution;
-                }
-            }
 
-            System.out.println(bestSolution.getFitness());
-
-            setChanged();
-            notifyObservers();
-        }
-    }
-
-    @Override
-    public boolean hasNext() {
-        return steps < maxStep;
-    }
-
-    @Override
-    public void initialize(List<Node> nodes) {
-        Set<Path> paths = new HashSet<>();
-        Node centralNode = nodes.get(0);
-
-        Path currentPath = new Path(MAX_CAPACITY);
-        currentPath.addNode(centralNode);
-
-        for (Node node : nodes.subList(1, nodes.size()-1)) { // We skip the first node, as it's the central
-            if (!currentPath.canAddNode(node)) {
-                currentPath.recompute();
-                paths.add(currentPath);
-                currentPath = new Path(MAX_CAPACITY);
-                currentPath.addNode(centralNode);
-                currentPath.addNode(node);
-            } else {
-                currentPath.addNode(node);
-            }
-        }
-        currentSolution = new Solution(paths, new FirstNeighbourhood());
-        bestSolution = currentSolution;
-        System.out.println("Initial solution : " + bestSolution.getFitness());
-    }
 }

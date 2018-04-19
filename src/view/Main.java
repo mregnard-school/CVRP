@@ -8,9 +8,12 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
+    private Controller controller;
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
+        FXMLLoader loader =new FXMLLoader(getClass().getResource("sample.fxml"));
+        Parent root = loader.load();
+        controller = loader.getController();
         primaryStage.setTitle("Annealing Algo");
         primaryStage.setScene(new Scene(root, 1024, 768));
 
@@ -20,11 +23,15 @@ public class Main extends Application {
         primaryStage.show();
     }
 
+    @Override
+    public void stop() throws Exception {
+        controller.interrupt();
+    }
 
     public static void main(String[] args) {
 
-        launch(args);
-        /*Path first = new Path();
+       launch(args);
+      /*  Path first = new Path();
         Path second = new Path();
 
         Node n1 = new Node(new Position(0, 0), 0);
@@ -38,20 +45,17 @@ public class Main extends Application {
         first.addNode(n2);
         first.addNode(n3);
 
+        second.addNode(n1);
         second.addNode(n4);
         second.addNode(n5);
         second.addNode(n6);
 
         System.out.println(first);
         System.out.println(second);
+        System.out.println();
 
-        Set<Path> paths = new HashSet<>();
-        paths.add(first);
-        paths.add(second);
-        Solution solution = new Solution(paths, new FirstNeighbourhood());
-        solution.getNextSolutions().forEach(solution1 -> {
-            solution1.getPaths().forEach(System.out::println);
-        });*/
+        PathSwapper swapper = new PathSwapper(first, second);
+        swapper.swap();*/
     }
 }
 

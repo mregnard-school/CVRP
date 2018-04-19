@@ -3,6 +3,7 @@ package view;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import module.Algorithms.Algorithm;
 import module.Algorithms.SimulatedAnnealing;
@@ -16,12 +17,16 @@ import java.util.Comparator;
 import java.util.List;
 
 public class Controller {
-    AlgoThreadObj algoThreadObj;
-    Thread algoThread;
-    AlgoObserver algoObserver;
+    private AlgoThreadObj algoThreadObj;
+    private Thread algoThread;
+    private AlgoObserver algoObserver;
+    private boolean started;
 
-    private void initializeAlgorithm(ActionEvent event, Algorithm algorithm, List<Node> nodes)
-    {
+    @FXML
+    private Button playButton;
+
+
+    private void initializeAlgorithm(ActionEvent event, Algorithm algorithm, List<Node> nodes) {
         Canvas mapCanvas = (Canvas)((ComboBox)event.getSource()).getScene().lookup("#mapCanvas");
         mapCanvas.prefHeight(600);
         mapCanvas.prefWidth(600);
@@ -85,19 +90,29 @@ public class Controller {
 
     @FXML
     private void playButtonClick(ActionEvent event) {
-        // Button was clicked, do something...
-        algoThread.start();
+        if(algoThread != null){
+            if(!started){
+                algoThread.start();
+                started = true;
+                playButton.setText("Pause");
+            } else {
+                algoThreadObj.toggle();
+                String text = algoThreadObj.isRunning() ? "Pause" : "Play";
+                playButton.setText(text);
+            }
+        }
     }
 
     @FXML
     private void stepButtonClick(ActionEvent event) {
-        // Button was clicked, do something...
-        algoThreadObj.getAlgorithm().next();
-    }
-    /*Platform.runLater(new Runnable() {
-        @Override public void run() {
-            labelConnection.setText("Connecting...");
+        if(algoThreadObj != null ){
+            algoThreadObj.getAlgorithm().next();
         }
-    });*/
+    }
+
+    public void interrupt() {
+        algoThreadObj.interrupt();
+        algoThread.interrupt();
+    }
 
 }

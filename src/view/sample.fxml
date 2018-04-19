@@ -17,7 +17,7 @@
       <top>
         <HBox prefHeight="100.0" prefWidth="200.0">
           <children>
-            <Button fx:id="playButton" mnemonicParsing="false" onAction="#playButtonClick" text="Play">
+            <Button fx:id="playButton" mnemonicParsing="false" onAction="#playButtonClick" text="Start">
               <HBox.margin>
                 <Insets right="5.0" />
               </HBox.margin>
