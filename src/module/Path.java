@@ -1,9 +1,6 @@
 package module;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import static java.util.stream.Collectors.joining;
 
@@ -74,21 +71,6 @@ public class Path {
 
     public double getDistance(){
         return this.distance;
-    }
-
-    public void reorder() {
-        //Wrapper to easily change method if needed
-        reorderGreedy();
-    }
-
-    private void reorderGreedy() {
-        LinkedHashSet<Node> greeded = new LinkedHashSet<>();
-
-        for (Iterator<Node> iterator = greedyIterator(); iterator.hasNext(); ) {
-            greeded.add(iterator.next());
-        }
-
-        nodes = greeded;
     }
 
 
