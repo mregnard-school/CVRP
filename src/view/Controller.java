@@ -3,7 +3,7 @@ package view;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import module.Algorithms.Algorithm;
 import module.Algorithms.SimulatedAnnealing;
@@ -28,10 +28,10 @@ public class Controller {
 
     private void initializeAlgorithm(ActionEvent event, Algorithm algorithm, List<Node> nodes) {
         Canvas mapCanvas = (Canvas)((ComboBox)event.getSource()).getScene().lookup("#mapCanvas");
-        mapCanvas.prefHeight(600);
-        mapCanvas.prefWidth(600);
-        mapCanvas.setWidth(600);
-        mapCanvas.setHeight(600);
+        mapCanvas.prefHeight(750);
+        mapCanvas.prefWidth(750);
+        mapCanvas.setWidth(750);
+        mapCanvas.setHeight(750);
 
         try{
             int maxWidth = nodes.stream()
@@ -63,13 +63,13 @@ public class Controller {
             System.out.println(minWidth + "<" + maxWidth);
 
             double widthMultiplier = (mapCanvas.getWidth()-40) / (maxWidth-minWidth);
-            double heightMultiplier = (mapCanvas.getHeight()-40) / (maxHeight-minHeight);
+            double heightMultiplier = (mapCanvas.getHeight()-140) / (maxHeight-minHeight);
             double smallestMultiplier = Math.min(widthMultiplier, heightMultiplier);
 
             algoObserver = new AlgoObserver(mapCanvas,
                     smallestMultiplier,
                     minWidth*smallestMultiplier,
-                    minHeight*smallestMultiplier
+                    minHeight*smallestMultiplier-100
             );
 
             algorithm.addObserver(algoObserver);
@@ -109,6 +109,16 @@ public class Controller {
             algoThreadObj.getAlgorithm().next();
         }
     }
+
+    @FXML
+    private void showBestSolutionClick(ActionEvent event) {
+        algoObserver.setShowBestSolution(((CheckBox)event.getSource()).isSelected());
+    }
+    /*Platform.runLater(new Runnable() {
+        @Override public void run() {
+            labelConnection.setText("Connecting...");
+        }
+    });*/
 
     public void interrupt() {
         algoThreadObj.interrupt();

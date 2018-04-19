@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class PathAlternator implements Iterator<LinkedHashSet<Node>> {
 
@@ -35,11 +36,26 @@ public class PathAlternator implements Iterator<LinkedHashSet<Node>> {
         return possibilities.hasNext() || (currentEntry != null && currentEntry.getValue() != null && currentEntry.getValue().hasNext());
     }
 
-    public bool
+    @Override
+    public LinkedHashSet<Node> next() {
+        return null;
+    }
+
+    @Override
+    public void remove() {
+
+    }
+
+    @Override
+    public void forEachRemaining(Consumer<? super LinkedHashSet<Node>> action) {
+
+    }
+
+    /*public bool
 
     @Override
     public LinkedHashSet<Node> next() {
         if(currentEntry == null !! currentEntry.getValue())
         currentMap = possibilities.next();
-    }
+    }*/
 }

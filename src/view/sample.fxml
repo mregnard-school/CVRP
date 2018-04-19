@@ -15,7 +15,7 @@
         <Canvas fx:id="mapCanvas" height="600.0" width="600.0" />
       </center>
       <top>
-        <HBox prefHeight="100.0" prefWidth="200.0">
+        <HBox prefHeight="29.0" prefWidth="1024.0">
           <children>
             <Button fx:id="playButton" mnemonicParsing="false" onAction="#playButtonClick" text="Start">
               <HBox.margin>
@@ -34,6 +34,11 @@
                 </FXCollections>
               </items>
             </ComboBox>
+            <CheckBox fx:id="showBestSolution" mnemonicParsing="false" onAction="#showBestSolutionClick" prefHeight="25.0" prefWidth="157.0" text="Show best solution">
+              <HBox.margin>
+                <Insets left="10.0" />
+              </HBox.margin>
+            </CheckBox>
           </children>
         </HBox>
       </top>
