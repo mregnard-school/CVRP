@@ -85,7 +85,7 @@ public class SimulatedAnnealing extends Algorithm {
         if(hasNext()){
             steps++;
             double temperature = temparature();
-            Set<Solution> neighbors = currentSolution.getNextSolutions();
+            Set<Solution> neighbors = currentSolution.getNextValidSolutions();
             Solution nextSolution = pickRandom(neighbors);
             double probability = random.nextDouble();
             if (acceptanceProbability(currentSolution, nextSolution, temperature) >= probability) {

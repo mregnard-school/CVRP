@@ -22,11 +22,11 @@ public class Solution {
     private double computeFitness() {
         double fitness = 0;
         for(Path path : paths){
-            double distance = path.getDistance();
-            if(distance < 0 ){
+            if(path.hasExceeded()){
                 valid = false;
-                return  Double.MAX_VALUE;
+                return Double.MAX_VALUE;
             } else {
+                double distance = path.getDistance();
                 fitness += distance;
             }
         }

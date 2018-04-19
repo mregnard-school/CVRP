@@ -1,6 +1,9 @@
 package module;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import static java.util.stream.Collectors.joining;
 
@@ -9,6 +12,7 @@ public class Path {
     int maxCapacity;
     int currentCapacity;
     double distance;
+    boolean exceeded;
 
     public Path() {
         this(100);
@@ -18,6 +22,7 @@ public class Path {
         this.nodes = new ArrayList<>();
         this.maxCapacity = maxCapacity;
         this.currentCapacity = 0;
+        exceeded = false;
     }
 
     public List<Node> getNodes() {
@@ -42,60 +47,51 @@ public class Path {
         recompute();
     }
 
-    public void recompute(){
+    public void recompute() {
         computeCapacity();
         computeDistance();
     }
 
     private void computeCapacity() {
-        currentCapacity =  nodes.stream()
+        exceeded = false;
+        currentCapacity = nodes.stream()
                 .mapToInt(Node::getCapacity)
                 .sum();
+
+        if (currentCapacity > maxCapacity) {
+            exceeded = true;
+        }
     }
 
     private void computeDistance() {
-        if(currentCapacity > maxCapacity){
-            distance = -1;
-        }
+        distance = -1;
+        if (!hasExceeded()) {
+            Iterator<Node> iterator = nodes.iterator();
+            Node current = iterator.next();
+            distance = 0;
 
-        Iterator<Node> iterator = nodes.iterator();
-        Node current = iterator.next();
-        distance = 0;
-
-        while (iterator.hasNext()) {
-            Node next = iterator.next();
-            distance += current.getPosition().getDistanceFrom(next.getPosition());
-            current = next;
+            while (iterator.hasNext()) {
+                Node next = iterator.next();
+                distance += current.getPosition().getDistanceFrom(next.getPosition());
+                current = next;
+            }
         }
     }
 
-    public double getDistance(){
+    public double getDistance() {
         return this.distance;
     }
 
-
-    Iterator<Node> greedyIterator() {
-        return new GreedyIterator(this, nodes.iterator().next());
-    }
-
-    public boolean replaceNode() {
-        //verify capacity+
-        return true;
-    }
-
-    public boolean removeNode() {
-        //verify capacity+
-        return true;
-    }
-
-    public int getMaxCapacity()
-    {
+    public int getMaxCapacity() {
         return maxCapacity;
     }
 
-    public int getCurrentCapacity()
-    {
+    public int getCurrentCapacity() {
         return currentCapacity;
+    }
+
+    public boolean hasExceeded() {
+        return exceeded;
     }
 
     @Override
