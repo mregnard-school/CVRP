@@ -30,7 +30,7 @@ public class SimulatedAnnealing extends Algorithm {
         random = Helpers.random;
         this.initialAcceptance = initialAcceptance;
         this.maxAcceptance = maxAcceptance;
-        mu = 0.95;
+        mu = 0.9995;
         initializeTemperature();
     }
 
@@ -42,7 +42,7 @@ public class SimulatedAnnealing extends Algorithm {
         Path currentPath = new Path(MAX_CAPACITY);
         currentPath.addNode(centralNode);
 
-        for (Node node : nodes.subList(1, nodes.size()-1)) { // We skip the first node, as it's the central
+        for (Node node : nodes.subList(1, nodes.size() - 1)) { // We skip the first node, as it's the central
             if (!currentPath.canAddNode(node)) {
                 currentPath.recompute();
                 paths.add(currentPath);
@@ -60,32 +60,32 @@ public class SimulatedAnnealing extends Algorithm {
 
     private void initializeTemperature() {
         double delta = calculateDelta();
-
         double initialTemperature = (delta * (-1)) / Math.log(initialAcceptance);
         maxTemperature = Math.log(
                 (delta * (-1)) / (initialTemperature * Math.log(maxAcceptance))
         ) / Math.log(mu);
 
         currentTemperature = initialTemperature;
+        System.out.println("Delta : " + delta);
+        System.out.println("Initial temp : " + initialTemperature);
     }
 
     private double calculateDelta() {
         currentSolution.setNeighbourStrategy(new SwapNeighbourhood());
-        Set<Solution> neighbours = currentSolution.getNextSolutions();
+        Set<Solution> neighbours = currentSolution.getNextValidSolutions();
         currentSolution.setNeighbourStrategy(new SimpleNeighbor());
-        double delta = Long.MIN_VALUE;
-        for (Solution solution : neighbours) {
-            double delta_temp = solution.getFitness() - currentSolution.getFitness();
-            if (delta_temp > delta) {
-                delta = delta_temp;
-            }
-        }
-        return delta;
+
+        return neighbours.stream()
+                .mapToDouble(solution -> solution.getFitness() - currentSolution.getFitness())
+                .map(Math::abs)
+                .max()
+                .orElse(Double.POSITIVE_INFINITY);
     }
 
     @Override
     public void next() {
-        if(hasNext()){
+        if (hasNext()) {
+            System.out.println("Temp " + currentTemperature);
             steps++;
             double temperature = temparature();
             Set<Solution> neighbors = currentSolution.getNextValidSolutions();
@@ -109,9 +109,7 @@ public class SimulatedAnnealing extends Algorithm {
     }
 
     private double temparature() {
-        if (steps % maxTemperature == 0) {
-            currentTemperature = currentTemperature * mu;
-        }
+        currentTemperature = currentTemperature * mu;
         return currentTemperature;
     }
 
