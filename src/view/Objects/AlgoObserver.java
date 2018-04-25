@@ -64,8 +64,6 @@ public class AlgoObserver implements Observer {
                 }
             }
         }
-
-
     }
 
     public void drawPathInfo(Solution solution)
@@ -83,7 +81,7 @@ public class AlgoObserver implements Observer {
             gc.strokeLine(350, infoOffsetY, 400, infoOffsetY);
             double distance = path.getDistance();
             String text = "Distance: " + (distance == -1 ? "Not possible" : (Math.round(distance*10000.0)/10000.0));
-            text+= ", Charge: " + path.getCurrentCapacity() + "<" + path.getMaxCapacity();
+            text+= ", Charge: " + path.getCurrentCapacity() + "/" + path.getMaxCapacity();
             gc.fillText(text, 410, infoOffsetY+4);
             infoOffsetY+=20;
         }

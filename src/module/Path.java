@@ -96,7 +96,7 @@ public class Path {
         String string = "(";
         string += nodes.stream()
                 .map(Node::toString)
-                .collect(joining(" ; "));
+                .collect(joining(";"));
         string += ")";
         return string;
     }
