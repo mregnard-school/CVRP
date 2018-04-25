@@ -23,7 +23,6 @@ public class SimulatedAnnealing extends Algorithm {
     private final static int MAX_CAPACITY = 100;
 
     public SimulatedAnnealing(int maxStep, double initialAcceptance, double maxAcceptance, List<Node> paths) {
-        //Create new Solution
         initialize(paths);
         steps = 0; //First iteration
         this.maxStep = maxStep;
@@ -53,6 +52,7 @@ public class SimulatedAnnealing extends Algorithm {
                 currentPath.addNode(node);
             }
         }
+        // TODO: 25/04/2018 Add centralNode at the end of each path
         currentSolution = new Solution(paths, new SimpleNeighbor());
         bestSolution = currentSolution;
         System.out.println("Initial solution : " + bestSolution.getFitness());
@@ -85,7 +85,6 @@ public class SimulatedAnnealing extends Algorithm {
     @Override
     public void next() {
         if (hasNext()) {
-            System.out.println("Temp " + currentTemperature);
             steps++;
             double temperature = temparature();
             Set<Solution> neighbors = currentSolution.getNextValidSolutions();
@@ -133,6 +132,4 @@ public class SimulatedAnnealing extends Algorithm {
 
         return Math.exp(-(secondFitness - firstFitness) / temperature);
     }
-
-
 }
