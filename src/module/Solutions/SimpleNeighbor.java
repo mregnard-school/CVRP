@@ -31,9 +31,9 @@ public class SimpleNeighbor implements NeighbourStrategy{
             PathSwapper swapper = new PathSwapper(first, second);
 
             int nbElementToSwap = randomNbElementToSwap();
-            nbElementToSwap = 1;
-            int firstIndex = rand.nextInt(first.getNodes().size());
-            int secondIndex = rand.nextInt(second.getNodes().size());
+            //nbElementToSwap = 1;
+            int firstIndex = rand.nextInt(first.getNodes().size() - nbElementToSwap);
+            int secondIndex = rand.nextInt(second.getNodes().size() - nbElementToSwap);
 
             if(first.equals(second)) {
                Path path =  swapper.swapSame(nbElementToSwap, firstIndex, secondIndex);
