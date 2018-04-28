@@ -27,6 +27,13 @@ public class Path {
         return nodes;
     }
 
+    public List<Node> getTrimmed() {
+        if (nodes.isEmpty()) {
+            return new ArrayList<>(nodes);
+        }
+        return nodes.subList(1, nodes.size() - 1);
+    }
+
     public boolean canAddNode(Node node) {
         return currentCapacity + node.getCapacity() < maxCapacity;
     }
@@ -41,7 +48,6 @@ public class Path {
 
     public void addAllNodes(Collection<Node> nodes) {
         this.nodes.addAll(nodes);
-        recompute();
     }
 
     public void recompute() {
@@ -89,6 +95,18 @@ public class Path {
 
     public boolean hasExceeded() {
         return exceeded;
+    }
+
+    public void startAndEndingPoint(Node warehouse) {
+        if (!nodes.contains(warehouse)) {
+            nodes.add(0, warehouse);
+            nodes.add(warehouse);
+        }
+        recompute();
+    }
+
+    public Node getWarehouse() {
+        return nodes.get(0);
     }
 
     @Override

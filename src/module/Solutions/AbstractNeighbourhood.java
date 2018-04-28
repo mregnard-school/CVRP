@@ -74,7 +74,7 @@ public abstract class AbstractNeighbourhood implements NeighbourStrategy {
 
     protected void cleanPath(Path pathToRemove, Path pathToAdd) {
         copy.remove(pathToRemove);
-        if (pathToAdd.getNodes().size() > 1) {
+        if (pathToAdd.getTrimmed().size() > 0) {
             copy.add(pathToAdd);
         }
     }

@@ -67,14 +67,17 @@ public class SimulatedAnnealing extends Algorithm {
             paths.add(path);
         });
 
-        paths.forEach(Path::recompute);
+        paths.forEach(path -> {
+            path.addNode(warehouse);
+            path.recompute();
+        });
         currentSolution = new Solution(paths, new SwapNeighbor());
         bestSolution = currentSolution;
     }
 
     private void initializeTemperature() {
-        double delta = calculateDelta();
-        delta = 120;
+        //double delta = calculateDelta();
+        double delta = 120;
         double initialTemperature = (delta * (-1)) / Math.log(initialAcceptance);
         maxTemperature = Math.log(
                 (delta * (-1)) / (initialTemperature * Math.log(maxAcceptance))
@@ -138,6 +141,8 @@ public class SimulatedAnnealing extends Algorithm {
             default:
                 break;
         }
+
+        currentSolution.setNeighbourStrategy(new StealNeighbour());
     }
 
     @Override

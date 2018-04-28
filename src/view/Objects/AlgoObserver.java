@@ -121,10 +121,10 @@ public class AlgoObserver implements Observer {
                         node.getPosition().getY() * multiplier - offsetY + (multiplier / 2)
                 );
             });
-            // Link first dot to last dot
+          /*  // Link first dot to last dot
             gc.lineTo(nodes.get(0).getPosition().getX() * multiplier - offsetX + (multiplier / 2),
                     nodes.get(0).getPosition().getY() * multiplier - offsetY + (multiplier / 2)
-            );
+            );*/
             gc.stroke();
             gc.closePath();
         });
