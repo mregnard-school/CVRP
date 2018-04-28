@@ -7,7 +7,8 @@ import module.utils.PathSwapper;
 import java.util.*;
 
 public abstract class AbstractNeighbourhood implements NeighbourStrategy {
-    private Random random = Helpers.random;
+    protected Random random = Helpers.random;
+    protected Solution solution;
     protected Set<Path> paths;
     protected PathSwapper swapper;
     protected Map.Entry<Path, Path> selected;
@@ -18,13 +19,16 @@ public abstract class AbstractNeighbourhood implements NeighbourStrategy {
     @Override
     public Set<Solution> getNeighbourhood(Solution solution) {
         paths = solution.getPaths();
-        selected = selectTwoDifferentPath();
-        swapper = new PathSwapper(selected.getKey(), selected.getValue());
+        do {
+            selected = selectTwoDifferentPath();
+            swapper = new PathSwapper(selected.getKey(), selected.getValue());
 
-       modified = neighbourhoodCalculation();
+            modified = neighbourhoodCalculation();
 
-        cleanPaths(modified.getKey(), modified.getValue());
-        setNewSolution();
+            cleanPaths(modified.getKey(), modified.getValue());
+            setNewSolution();
+        } while (!this.solution.isValid());
+
 
         return solutions;
     }
@@ -40,25 +44,6 @@ public abstract class AbstractNeighbourhood implements NeighbourStrategy {
         return new AbstractMap.SimpleEntry<>(first, second);
     }
 
-    protected abstract Map.Entry<Path, Path> neighbourhoodCalculation();
-
-    private void cleanPaths(Path key, Path value) {
-        copy = new HashSet<>(paths);
-        cleanPath(selected.getKey(), key);
-        cleanPath(selected.getValue(), value);
-    }
-
-    private void cleanPath(Path pathToRemove, Path pathToAdd) {
-        paths.remove(pathToRemove);
-        paths.add(pathToAdd);
-    }
-    
-    private void setNewSolution() {
-        solutions = new HashSet<>();
-        Solution solution = new Solution(copy, this);
-        solutions.add(solution);
-    }
-
     private Path selectRandomPath() {
         int rdIndex = random.nextInt(paths.size());
 
@@ -68,4 +53,24 @@ public abstract class AbstractNeighbourhood implements NeighbourStrategy {
                 .orElseThrow(IndexOutOfBoundsException::new);
     }
 
+    protected abstract Map.Entry<Path, Path> neighbourhoodCalculation();
+
+    private void cleanPaths(Path key, Path value) {
+        copy = new HashSet<>(paths);
+        cleanPath(selected.getKey(), key);
+        cleanPath(selected.getValue(), value);
+    }
+
+    private void cleanPath(Path pathToRemove, Path pathToAdd) {
+        copy.remove(pathToRemove);
+        if (pathToAdd.getNodes().size() > 1) {
+            copy.add(pathToAdd);
+        }
+    }
+
+    private void setNewSolution() {
+        solutions = new HashSet<>();
+        solution = new Solution(copy, this);
+        solutions.add(solution);
+    }
 }
