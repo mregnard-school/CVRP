@@ -76,6 +76,7 @@ public class Controller {
             algorithm.addObserver(algoObserver);
             algoThreadObj = new AlgoThreadObj(algorithm);
             algoThread = new Thread(algoThreadObj);
+            algoObserver.display(algorithm);
         } catch (ComparingException e){
             e.printStackTrace();
         }
@@ -85,8 +86,8 @@ public class Controller {
     @FXML
     private void changeAlgorithm(ActionEvent event) {
         System.out.println("Initializing algorithm");
-        List<Node> nodes = NodeReader.getNodes("data/data01.txt");
-        initializeAlgorithm(event, new SimulatedAnnealing(25000, 0.8, 0.01, nodes), nodes);
+        List<Node> nodes = NodeReader.getNodes("data/data02.txt");
+        initializeAlgorithm(event, new SimulatedAnnealing(100000, 0.8, 0.01, nodes), nodes);
     }
 
     @FXML
@@ -114,16 +115,18 @@ public class Controller {
     @FXML
     private void showBestSolutionClick(ActionEvent event) {
         algoObserver.setShowBestSolution(((CheckBox)event.getSource()).isSelected());
-    }
-    /*Platform.runLater(new Runnable() {
-        @Override public void run() {
-            labelConnection.setText("Connecting...");
+        if (!algoThreadObj.isRunning()) {
+           algoObserver.display(algoThreadObj.getAlgorithm());
         }
-    });*/
+    }
 
     public void interrupt() {
-        algoThreadObj.interrupt();
-        algoThread.interrupt();
+        if(algoThreadObj != null) {
+            algoThreadObj.interrupt();
+        }
+        if(algoThread != null) {
+            algoThread.interrupt();
+        }
     }
 
 }

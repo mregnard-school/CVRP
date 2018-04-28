@@ -4,5 +4,7 @@ import java.util.Random;
 
 public class Helpers {
 
-    public final static Random random = new Random(Seeder.SEED);
+    public final static Random random = new Random(
+            Seeder.SEED
+    );
 }

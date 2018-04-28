@@ -67,6 +67,6 @@ public class Node {
 
     @Override
     public String toString() {
-        return  "[" /*+ position.getX() + ", " + position.getY() + ", "*/ + capacity + "]";
+        return  "(" + position.getX() + ", " + position.getY() + "), " + capacity + "";
     }
 }

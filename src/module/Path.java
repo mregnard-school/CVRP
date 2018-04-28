@@ -1,9 +1,6 @@
 package module;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import static java.util.stream.Collectors.joining;
 
@@ -23,6 +20,7 @@ public class Path {
         this.maxCapacity = maxCapacity;
         this.currentCapacity = 0;
         exceeded = false;
+
     }
 
     public List<Node> getNodes() {
@@ -38,7 +36,6 @@ public class Path {
             return false;
         }
         nodes.add(node);
-        currentCapacity += node.getCapacity();
         return true;
     }
 
@@ -99,8 +96,26 @@ public class Path {
         String string = "(";
         string += nodes.stream()
                 .map(Node::toString)
-                .collect(joining(","));
+                .collect(joining(";"));
         string += ")";
         return string;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof Path)) {
+            return false;
+        }
+
+        Path other = (Path) obj;
+        return this.getNodes().equals(other.getNodes());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getNodes());
     }
 }
