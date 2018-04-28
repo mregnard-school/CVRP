@@ -17,10 +17,6 @@ public class SimulatedAnnealing extends Algorithm {
     private double currentTemperature;
     private final double mu;
 
-    int nbSwap = 0;
-    int nbSwapSame = 0;
-    int nbSteal = 0;
-
 
     private final static int MAX_CAPACITY = 100;
 
@@ -72,7 +68,7 @@ public class SimulatedAnnealing extends Algorithm {
         });
 
         paths.forEach(Path::recompute);
-        currentSolution = new Solution(paths, new SimpleNeighbor());
+        currentSolution = new Solution(paths, new SwapNeighbor());
         bestSolution = currentSolution;
     }
 
@@ -92,7 +88,7 @@ public class SimulatedAnnealing extends Algorithm {
     }
 
     private double calculateDelta() {
-        currentSolution.setNeighbourStrategy(new SwapNeighbourhood());
+        currentSolution.setNeighbourStrategy(new PermutationNeighbourhood());
         Set<Solution> neighbours = currentSolution.getNextValidSolutions();
         currentSolution.setNeighbourStrategy(new StealNeighbour());
 
@@ -123,11 +119,6 @@ public class SimulatedAnnealing extends Algorithm {
 
             setChanged();
             notifyObservers();
-        } else {
-            int total = nbSteal + nbSwap + nbSwapSame;
-            System.out.println("nb swap: " + ((double) nbSwap / total));
-            System.out.println("nb same: " + ((double) nbSwapSame / total));
-            System.out.println("nb steal: " + ((double) nbSteal / total));
         }
     }
 
@@ -136,16 +127,13 @@ public class SimulatedAnnealing extends Algorithm {
 
         switch (rd) {
             case 0:
-                currentSolution.setNeighbourStrategy(new SimpleNeighbor());
-                nbSwap++;
+                currentSolution.setNeighbourStrategy(new SwapNeighbor());
                 break;
             case 1:
                 currentSolution.setNeighbourStrategy(new SwapSameNeighbourhood());
-                nbSwapSame++;
                 break;
             case 2:
                 currentSolution.setNeighbourStrategy(new StealNeighbour());
-                nbSteal++;
                 break;
             default:
                 break;
