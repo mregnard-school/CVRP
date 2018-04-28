@@ -22,8 +22,8 @@ public class PathSwapper {
     }
 
     public Set<Map.Entry<Path, Path>> swap() {
-        int nbMaximumOfSwapsPossible = Math.min(firstNodes.size(), secondNodes.size()) - 1;
-        for (int i = 1; i <= nbMaximumOfSwapsPossible; i++) {
+        int nbMaximumOfSwapsPossible = Math.min(firstNodes.size(), secondNodes.size());
+        for (int i = 0; i <= nbMaximumOfSwapsPossible; i++) {
             swapNElements(i);
         }
 
