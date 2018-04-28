@@ -76,6 +76,7 @@ public class Controller {
             algorithm.addObserver(algoObserver);
             algoThreadObj = new AlgoThreadObj(algorithm);
             algoThread = new Thread(algoThreadObj);
+            algoObserver.display(algorithm);
         } catch (ComparingException e){
             e.printStackTrace();
         }
@@ -114,12 +115,10 @@ public class Controller {
     @FXML
     private void showBestSolutionClick(ActionEvent event) {
         algoObserver.setShowBestSolution(((CheckBox)event.getSource()).isSelected());
-    }
-    /*Platform.runLater(new Runnable() {
-        @Override public void run() {
-            labelConnection.setText("Connecting...");
+        if (!algoThreadObj.isRunning()) {
+           algoObserver.display(algoThreadObj.getAlgorithm());
         }
-    });*/
+    }
 
     public void interrupt() {
         if(algoThreadObj != null) {

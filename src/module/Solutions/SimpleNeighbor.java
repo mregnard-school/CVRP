@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-public class SimpleNeighbor implements NeighbourStrategy{
+public class SimpleNeighbor implements NeighbourStrategy {
 
     Set<Path> paths;
     Set<Solution> neigbhors;
@@ -25,8 +25,10 @@ public class SimpleNeighbor implements NeighbourStrategy{
         do {
             neigbhors = new HashSet<>();
             paths = solution.getPaths();
-            first = selectRandomPath();
-            second = selectRandomPath();
+            do {
+                first = selectRandomPath();
+                second = selectRandomPath();
+            } while (first.equals(second));
 
             PathSwapper swapper = new PathSwapper(first, second);
 
@@ -34,36 +36,29 @@ public class SimpleNeighbor implements NeighbourStrategy{
             nbElementToSwap = 1;
             // FIXME: 25/04/2018 Irindul : Nodes are deleted when nbElementToSwap > 2
 
-            int firstIndex = rand.nextInt(first.getNodes().size() - nbElementToSwap -1) + 1;
-            int secondIndex = rand.nextInt(second.getNodes().size() - nbElementToSwap -1) + 1;
+            // TODO: 28/04/2018 Workaround
 
-            if(first.equals(second)) {
-               Path path =  swapper.swapSame(nbElementToSwap, firstIndex, secondIndex);
-               replacePath(path);
-            } else {
-                Map.Entry<Path, Path> swapped  = swapper.swap(nbElementToSwap, firstIndex, secondIndex);
-                createNewPaths(swapped.getKey(), swapped.getValue());
+            int firstIndex = 1;
+            int secondIndex = 1;
+
+            if(first.getNodes().size() > 2 && second.getNodes().size() > 2) {
+                firstIndex = rand.nextInt(first.getNodes().size() - nbElementToSwap - 1) + 1;
+                secondIndex = rand.nextInt(second.getNodes().size() - nbElementToSwap - 1) + 1;
             }
+
+
+            Map.Entry<Path, Path> swapped = swapper.swap(nbElementToSwap, firstIndex, secondIndex);
+            createNewPaths(swapped.getKey(), swapped.getValue());
         } while (!this.solution.isValid());
 
         neigbhors.add(this.solution);
         return neigbhors;
     }
 
-    private void replacePath(Path path) {
-        Set<Path> pathCopy = new HashSet<>(paths);
-
-        pathCopy.remove(first);
-        pathCopy.add(path);
-
-        solution = new Solution(pathCopy, this);
-
-    }
-
 
     private int randomNbElementToSwap() {
         int size = Math.min(first.getNodes().size(), second.getNodes().size());
-        return rand.nextInt(size -1);
+        return rand.nextInt(size - 1);
     }
 
     public Path selectRandomPath() {

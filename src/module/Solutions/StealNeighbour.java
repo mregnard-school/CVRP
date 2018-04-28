@@ -16,17 +16,19 @@ public class StealNeighbour implements NeighbourStrategy {
 
     @Override
     public Set<Solution> getNeighbourhood(Solution solution) {
-        paths = new ArrayList<>(solution.getPaths());
-        Map.Entry<Path, Path> selected = selectRandomPath();
+        do {
+            paths = new ArrayList<>(solution.getPaths());
+            Map.Entry<Path, Path> selected = selectRandomPath();
 
-        stealer = selected.getKey();
-        stolen = selected.getValue();
+            stealer = selected.getKey();
+            stolen = selected.getValue();
 
-        Map.Entry<Path, Path> modified = steal();
-        createNewPaths(modified.getKey(), modified.getValue());
+            Map.Entry<Path, Path> modified = steal();
+            createNewPaths(modified.getKey(), modified.getValue());
+        } while(!this.solution.isValid());
+
         Set<Solution> solutions = new HashSet<>();
-        solutions.add(solution);
-
+        solutions.add(this.solution);
         return solutions;
     }
 
@@ -46,8 +48,14 @@ public class StealNeighbour implements NeighbourStrategy {
         Set<Path> pathCopy = new HashSet<>(paths);
         pathCopy.remove(this.stealer);
         pathCopy.remove(this.stolen);
-        pathCopy.add(first);
-        pathCopy.add(second);
+
+        if(first.getNodes().size() > 1) {
+            pathCopy.add(first);
+        }
+
+        if(second.getNodes().size() > 1) {
+            pathCopy.add(second);
+        }
         solution = new Solution(pathCopy, this);
     }
 
@@ -61,7 +69,6 @@ public class StealNeighbour implements NeighbourStrategy {
         List<Node> nodeStolen = new ArrayList<>(stealer.getNodes());
         rd = random.nextInt(nodeStolen.size() - 1 ) + 1;
         nodeStolen.add(rd, stoled);
-
 
 
         Path first = new Path(stealer.getMaxCapacity());

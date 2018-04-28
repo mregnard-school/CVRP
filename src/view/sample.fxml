@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.collections.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.canvas.*?>
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="view.Controller">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.Controller">
   <children>
     <BorderPane fx:id="grid" layoutX="0.0" layoutY="0.0" prefHeight="768.0" prefWidth="1024.0">
       <center>
@@ -34,7 +37,7 @@
                 </FXCollections>
               </items>
             </ComboBox>
-            <CheckBox fx:id="showBestSolution" mnemonicParsing="false" onAction="#showBestSolutionClick" prefHeight="25.0" prefWidth="157.0" text="Show best solution">
+            <CheckBox fx:id="showBestSolution" mnemonicParsing="false" onAction="#showBestSolutionClick" prefHeight="25.0" prefWidth="157.0" selected="true" text="Show best solution">
               <HBox.margin>
                 <Insets left="10.0" />
               </HBox.margin>

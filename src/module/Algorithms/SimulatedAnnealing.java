@@ -2,10 +2,7 @@ package module.Algorithms;
 
 import module.Node;
 import module.Path;
-import module.Solutions.SimpleNeighbor;
-import module.Solutions.Solution;
-import module.Solutions.StealNeighbour;
-import module.Solutions.SwapNeighbourhood;
+import module.Solutions.*;
 import module.utils.Helpers;
 
 import java.util.*;
@@ -20,10 +17,15 @@ public class SimulatedAnnealing extends Algorithm {
     private double currentTemperature;
     private final double mu;
 
+    int nbSwap = 0;
+    int nbSwapSame = 0;
+    int nbSteal = 0;
+
+
     private final static int MAX_CAPACITY = 100;
 
     public SimulatedAnnealing(int maxStep, double initialAcceptance, double maxAcceptance, List<Node> paths) {
-        initialize(paths);
+        initializeAPathByNode(paths);
         steps = 0; //First iteration
         this.maxStep = maxStep;
         random = Helpers.random;
@@ -42,7 +44,7 @@ public class SimulatedAnnealing extends Algorithm {
         Path currentPath = new Path(MAX_CAPACITY);
         currentPath.addNode(centralNode);
 
-        for (Node node : nodes.subList(1, nodes.size() - 1)) { // We skip the first node, as it's the central
+        for (Node node : nodes.subList(1, nodes.size())) { // We skip the first node, as it's the central
             if (!currentPath.canAddNode(node)) {
                 currentPath.recompute();
                 paths.add(currentPath);
@@ -54,13 +56,29 @@ public class SimulatedAnnealing extends Algorithm {
             }
         }
         // TODO: 25/04/2018 Add centralNode at the end of each path
+        currentSolution = new Solution(paths, new StealNeighbour());
+        bestSolution = currentSolution;
+    }
+
+    private void initializeAPathByNode(List<Node> nodes) {
+
+        Set<Path> paths = new HashSet<>();
+        Node warehouse = nodes.get(0);
+        nodes.stream().skip(1).forEach(node -> {
+            Path path = new Path(MAX_CAPACITY);
+            path.addNode(warehouse);
+            path.addNode(node);
+            paths.add(path);
+        });
+
+        paths.forEach(Path::recompute);
         currentSolution = new Solution(paths, new SimpleNeighbor());
         bestSolution = currentSolution;
-        System.out.println("Initial solution : " + bestSolution.getFitness());
     }
 
     private void initializeTemperature() {
         double delta = calculateDelta();
+        delta = 120;
         double initialTemperature = (delta * (-1)) / Math.log(initialAcceptance);
         maxTemperature = Math.log(
                 (delta * (-1)) / (initialTemperature * Math.log(maxAcceptance))
@@ -69,13 +87,12 @@ public class SimulatedAnnealing extends Algorithm {
         currentTemperature = initialTemperature;
         System.out.println("Delta : " + delta);
         System.out.println("Initial temp : " + initialTemperature);
-        currentTemperature = 50;
     }
 
     private double calculateDelta() {
         currentSolution.setNeighbourStrategy(new SwapNeighbourhood());
         Set<Solution> neighbours = currentSolution.getNextValidSolutions();
-        currentSolution.setNeighbourStrategy(new SimpleNeighbor());
+        currentSolution.setNeighbourStrategy(new StealNeighbour());
 
         return neighbours.stream()
                 .mapToDouble(solution -> solution.getFitness() - currentSolution.getFitness())
@@ -104,15 +121,32 @@ public class SimulatedAnnealing extends Algorithm {
 
             setChanged();
             notifyObservers();
+        } else {
+            int total = nbSteal + nbSwap + nbSwapSame;
+            System.out.println("nb swap: " + ((double) nbSwap / total));
+            System.out.println("nb same: " + ((double) nbSwapSame / total));
+            System.out.println("nb steal: " + ((double) nbSteal / total));
         }
     }
 
     private void setNeighbourhoodStrategy() {
-        int rd = random.nextInt();
-        if (rd % 2 == 0) {
-            currentSolution.setNeighbourStrategy(new SimpleNeighbor());
-        } else {
-            currentSolution.setNeighbourStrategy(new StealNeighbour());
+        int rd = random.nextInt(3);
+
+        switch (rd) {
+            case 0:
+                currentSolution.setNeighbourStrategy(new SimpleNeighbor());
+                nbSwap++;
+                break;
+            case 1:
+                currentSolution.setNeighbourStrategy(new SwapSameNeighbourhood());
+                nbSwapSame++;
+                break;
+            case 2:
+                currentSolution.setNeighbourStrategy(new StealNeighbour());
+                nbSteal++;
+                break;
+            default:
+                break;
         }
     }
 

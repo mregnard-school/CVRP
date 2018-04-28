@@ -143,17 +143,17 @@ public class AlgoObserver implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         Algorithm algo = (Algorithm) o;
-        Solution solutionToDraw = showBestSolution ? algo.getBestSolution() : algo.getCurrentSolution();
 
         int steps = algo.getSteps();
-        if(steps % 10000 == 0) {
-           drawSolution(solutionToDraw);
-            drawAlgorithmInfo(algo);
+        if(steps % 1000 == 0) {
+           display(algo);
         }
     }
 
-    public boolean isShowBestSolution() {
-        return showBestSolution;
+    public void display(Algorithm algorithm) {
+        Solution solutionToDraw = showBestSolution ? algorithm.getBestSolution() : algorithm.getCurrentSolution();
+        drawSolution(solutionToDraw);
+        drawAlgorithmInfo(algorithm);
     }
 
     public void setShowBestSolution(boolean showBestSolution) {

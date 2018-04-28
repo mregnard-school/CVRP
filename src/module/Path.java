@@ -20,6 +20,7 @@ public class Path {
         this.maxCapacity = maxCapacity;
         this.currentCapacity = 0;
         exceeded = false;
+
     }
 
     public List<Node> getNodes() {
@@ -35,7 +36,6 @@ public class Path {
             return false;
         }
         nodes.add(node);
-        currentCapacity += node.getCapacity();
         return true;
     }
 
