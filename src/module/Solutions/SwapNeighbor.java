@@ -21,7 +21,7 @@ public class SwapNeighbor extends AbstractNeighbourhood {
     }
 
     private void randomNbElementToSwap() {
-        int size = Math.min(first.getTrimmed().size(), second.getTrimmed().size());
+        int size = Math.min(first.getNodes().size(), second.getNodes().size());
         nbElementToSwap = random.nextInt(size);
         nbElementToSwap = 1;
         // TODO: 28/04/2018 Converge mieux avec 1

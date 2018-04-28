@@ -23,11 +23,11 @@ public class Path {
 
     }
 
-    public List<Node> getNodes() {
+    public List<Node> getNodesWithWarehouse() {
         return nodes;
     }
 
-    public List<Node> getTrimmed() {
+    public List<Node> getNodes() {
         if (nodes.isEmpty()) {
             return new ArrayList<>(nodes);
         }
@@ -129,11 +129,11 @@ public class Path {
         }
 
         Path other = (Path) obj;
-        return this.getNodes().equals(other.getNodes());
+        return this.getNodesWithWarehouse().equals(other.getNodesWithWarehouse());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getNodes());
+        return Objects.hashCode(getNodesWithWarehouse());
     }
 }

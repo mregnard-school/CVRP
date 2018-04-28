@@ -16,8 +16,8 @@ public class PathSwapper {
     public PathSwapper(Path first, Path second) {
         this.first = first;
         this.second = second;
-        firstNodes = first.getTrimmed();
-        secondNodes = second.getTrimmed();
+        firstNodes = first.getNodes();
+        secondNodes = second.getNodes();
         paths = new HashSet<>();
     }
 

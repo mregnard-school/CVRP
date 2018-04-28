@@ -102,7 +102,7 @@ public class AlgoObserver implements Observer {
             gc.setFill(c);
             gc.setStroke(c);
 
-            List<Node> nodes = new ArrayList<>(path.getNodes());
+            List<Node> nodes = new ArrayList<>(path.getNodesWithWarehouse());
 
             // Setting the dots
             nodes.forEach(node -> {

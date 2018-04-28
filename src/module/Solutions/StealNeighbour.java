@@ -15,12 +15,12 @@ public class StealNeighbour extends AbstractNeighbourhood {
         Path stealer = selected.getKey();
         Path stolen = selected.getValue();
 
-        List<Node> nodesToSteal = new ArrayList<>(stolen.getTrimmed());
+        List<Node> nodesToSteal = new ArrayList<>(stolen.getNodes());
 
         int rd = random.nextInt(nodesToSteal.size());
         Node stoled = nodesToSteal.remove(rd);
 
-        List<Node> nodeStolen = new ArrayList<>(stealer.getTrimmed());
+        List<Node> nodeStolen = new ArrayList<>(stealer.getNodes());
         rd = random.nextInt(nodeStolen.size());
         nodeStolen.add(rd, stoled);
 
