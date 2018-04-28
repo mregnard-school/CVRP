@@ -59,10 +59,6 @@ public class Controller {
                     .getPosition()
                     .getY();
 
-
-
-            System.out.println(minWidth + "<" + maxWidth);
-
             double widthMultiplier = (mapCanvas.getWidth()-40) / (maxWidth-minWidth);
             double heightMultiplier = (mapCanvas.getHeight()-140) / (maxHeight-minHeight);
             double smallestMultiplier = Math.min(widthMultiplier, heightMultiplier);
@@ -86,8 +82,8 @@ public class Controller {
     @FXML
     private void changeAlgorithm(ActionEvent event) {
         System.out.println("Initializing algorithm");
-        List<Node> nodes = NodeReader.getNodes("data/data02.txt");
-        initializeAlgorithm(event, new SimulatedAnnealing(100000, 0.8, 0.01, nodes), nodes);
+        List<Node> nodes = NodeReader.getNodes("data/data01.txt");
+        initializeAlgorithm(event, new SimulatedAnnealing(100000, nodes), nodes);
     }
 
     @FXML

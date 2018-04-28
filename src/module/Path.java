@@ -23,8 +23,15 @@ public class Path {
 
     }
 
-    public List<Node> getNodes() {
+    public List<Node> getNodesWithWarehouse() {
         return nodes;
+    }
+
+    public List<Node> getNodes() {
+        if (nodes.isEmpty()) {
+            return new ArrayList<>(nodes);
+        }
+        return nodes.subList(1, nodes.size() - 1);
     }
 
     public boolean canAddNode(Node node) {
@@ -41,7 +48,6 @@ public class Path {
 
     public void addAllNodes(Collection<Node> nodes) {
         this.nodes.addAll(nodes);
-        recompute();
     }
 
     public void recompute() {
@@ -91,6 +97,18 @@ public class Path {
         return exceeded;
     }
 
+    public void startAndEndingPoint(Node warehouse) {
+        if (!nodes.contains(warehouse)) {
+            nodes.add(0, warehouse);
+            nodes.add(warehouse);
+        }
+        recompute();
+    }
+
+    public Node getWarehouse() {
+        return nodes.get(0);
+    }
+
     @Override
     public String toString() {
         String string = "(";
@@ -111,11 +129,11 @@ public class Path {
         }
 
         Path other = (Path) obj;
-        return this.getNodes().equals(other.getNodes());
+        return this.getNodesWithWarehouse().equals(other.getNodesWithWarehouse());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getNodes());
+        return Objects.hashCode(getNodesWithWarehouse());
     }
 }

@@ -7,19 +7,23 @@ import java.util.*;
 
 public class PathSwapper {
 
+    private Path first;
+    private Path second;
     private List<Node> firstNodes;
     private List<Node> secondNodes;
     Set<Map.Entry<Path, Path>> paths;
 
     public PathSwapper(Path first, Path second) {
+        this.first = first;
+        this.second = second;
         firstNodes = first.getNodes();
         secondNodes = second.getNodes();
         paths = new HashSet<>();
     }
 
     public Set<Map.Entry<Path, Path>> swap() {
-        int nbMaximumOfSwapsPossible = Math.min(firstNodes.size(), secondNodes.size()) - 1;
-        for (int i = 1; i <= nbMaximumOfSwapsPossible; i++) {
+        int nbMaximumOfSwapsPossible = Math.min(firstNodes.size(), secondNodes.size());
+        for (int i = 0; i <= nbMaximumOfSwapsPossible; i++) {
             swapNElements(i);
         }
 
@@ -71,10 +75,12 @@ public class PathSwapper {
 
         Path first = new Path();
         first.addAllNodes(firstNodesCopy);
+        first.startAndEndingPoint(this.first.getWarehouse());
+
 
         Path second = new Path();
         second.addAllNodes(secondNodesCopy);
-
+        second.startAndEndingPoint(this.second.getWarehouse());
         return new AbstractMap.SimpleEntry<>(first, second);
     }
 
@@ -103,6 +109,7 @@ public class PathSwapper {
 
         Path path = new Path();
         path.addAllNodes(nodeCopy);
+        path.startAndEndingPoint(first.getWarehouse());
         return path;
     }
 

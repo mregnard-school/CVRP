@@ -102,7 +102,7 @@ public class AlgoObserver implements Observer {
             gc.setFill(c);
             gc.setStroke(c);
 
-            List<Node> nodes = new ArrayList<>(path.getNodes());
+            List<Node> nodes = new ArrayList<>(path.getNodesWithWarehouse());
 
             // Setting the dots
             nodes.forEach(node -> {
@@ -121,10 +121,10 @@ public class AlgoObserver implements Observer {
                         node.getPosition().getY() * multiplier - offsetY + (multiplier / 2)
                 );
             });
-            // Link first dot to last dot
+          /*  // Link first dot to last dot
             gc.lineTo(nodes.get(0).getPosition().getX() * multiplier - offsetX + (multiplier / 2),
                     nodes.get(0).getPosition().getY() * multiplier - offsetY + (multiplier / 2)
-            );
+            );*/
             gc.stroke();
             gc.closePath();
         });

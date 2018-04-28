@@ -11,25 +11,19 @@ public class SimulatedAnnealing extends Algorithm {
 
     private final int maxStep;
     private final Random random;
-    private final double initialAcceptance;
-    private final double maxAcceptance;
-    private double maxTemperature;
     private double currentTemperature;
     private final double mu;
 
 
     private final static int MAX_CAPACITY = 100;
 
-    public SimulatedAnnealing(int maxStep, double initialAcceptance, double maxAcceptance, List<Node> paths) {
+    public SimulatedAnnealing(int maxStep, List<Node> paths) {
         initializeAPathByNode(paths);
-        steps = 0; //First iteration
+        steps = 0;
         this.maxStep = maxStep;
         random = Helpers.random;
-        this.initialAcceptance = initialAcceptance;
-        this.maxAcceptance = maxAcceptance;
         mu = 0.9995;
         initializeTemperature();
-        System.out.println(temparature());
     }
 
     @Override
@@ -67,36 +61,16 @@ public class SimulatedAnnealing extends Algorithm {
             paths.add(path);
         });
 
-        paths.forEach(Path::recompute);
+        paths.forEach(path -> {
+            path.addNode(warehouse);
+            path.recompute();
+        });
         currentSolution = new Solution(paths, new SwapNeighbor());
         bestSolution = currentSolution;
     }
 
     private void initializeTemperature() {
-        double delta = calculateDelta();
-        delta = 120;
-        double initialTemperature = (delta * (-1)) / Math.log(initialAcceptance);
-        maxTemperature = Math.log(
-                (delta * (-1)) / (initialTemperature * Math.log(maxAcceptance))
-        ) / Math.log(mu);
-
-        currentTemperature = initialTemperature;
-        currentTemperature = 10;
-        System.out.println("Delta : " + delta);
-        System.out.println("Initial temp : " + initialTemperature);
-
-    }
-
-    private double calculateDelta() {
-        currentSolution.setNeighbourStrategy(new PermutationNeighbourhood());
-        Set<Solution> neighbours = currentSolution.getNextValidSolutions();
-        currentSolution.setNeighbourStrategy(new StealNeighbour());
-
-        return neighbours.stream()
-                .mapToDouble(solution -> solution.getFitness() - currentSolution.getFitness())
-                .map(Math::abs)
-                .max()
-                .orElse(Double.POSITIVE_INFINITY);
+        currentTemperature = 100;
     }
 
     @Override
@@ -105,7 +79,6 @@ public class SimulatedAnnealing extends Algorithm {
             steps++;
             double temperature = temparature();
             setNeighbourhoodStrategy();
-
             Set<Solution> neighbors = currentSolution.getNextValidSolutions();
             Solution nextSolution = pickRandom(neighbors);
 
