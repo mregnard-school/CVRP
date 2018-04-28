@@ -108,7 +108,6 @@ public class SimulatedAnnealing extends Algorithm {
             steps++;
             double temperature = temparature();
             setNeighbourhoodStrategy();
-
             Set<Solution> neighbors = currentSolution.getNextValidSolutions();
             Solution nextSolution = pickRandom(neighbors);
 
@@ -141,8 +140,6 @@ public class SimulatedAnnealing extends Algorithm {
             default:
                 break;
         }
-
-        currentSolution.setNeighbourStrategy(new StealNeighbour());
     }
 
     @Override

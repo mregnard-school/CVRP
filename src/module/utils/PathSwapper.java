@@ -7,13 +7,17 @@ import java.util.*;
 
 public class PathSwapper {
 
+    private Path first;
+    private Path second;
     private List<Node> firstNodes;
     private List<Node> secondNodes;
     Set<Map.Entry<Path, Path>> paths;
 
     public PathSwapper(Path first, Path second) {
-        firstNodes = first.getNodes();
-        secondNodes = second.getNodes();
+        this.first = first;
+        this.second = second;
+        firstNodes = first.getTrimmed();
+        secondNodes = second.getTrimmed();
         paths = new HashSet<>();
     }
 
@@ -71,10 +75,12 @@ public class PathSwapper {
 
         Path first = new Path();
         first.addAllNodes(firstNodesCopy);
+        first.startAndEndingPoint(this.first.getWarehouse());
+
 
         Path second = new Path();
         second.addAllNodes(secondNodesCopy);
-
+        second.startAndEndingPoint(this.second.getWarehouse());
         return new AbstractMap.SimpleEntry<>(first, second);
     }
 

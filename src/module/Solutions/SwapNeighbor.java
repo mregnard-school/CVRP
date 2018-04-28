@@ -17,13 +17,12 @@ public class SwapNeighbor extends AbstractNeighbourhood {
 
         randomNbElementToSwap();
         Map.Entry<Integer, Integer> indexes = selectIndexes(first, second, nbElementToSwap);
-
         return swapper.swap(nbElementToSwap, indexes.getKey(), indexes.getValue());
     }
 
     private void randomNbElementToSwap() {
-        int size = Math.min(first.getNodes().size(), second.getNodes().size());
-        nbElementToSwap = random.nextInt(size - 1);
+        int size = Math.min(first.getTrimmed().size(), second.getTrimmed().size());
+        nbElementToSwap = random.nextInt(size);
         nbElementToSwap = 1;
         // TODO: 28/04/2018 Converge mieux avec 1
     }

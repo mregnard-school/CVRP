@@ -73,9 +73,11 @@ public abstract class AbstractNeighbourhood implements NeighbourStrategy {
     }
 
     protected void cleanPath(Path pathToRemove, Path pathToAdd) {
-        copy.remove(pathToRemove);
-        if (pathToAdd.getTrimmed().size() > 0) {
-            copy.add(pathToAdd);
+        if(!copy.contains(pathToAdd)){
+            copy.remove(pathToRemove);
+            if (pathToAdd.getTrimmed().size() > 0) {
+                copy.add(pathToAdd);
+            }
         }
     }
 
@@ -94,13 +96,13 @@ public abstract class AbstractNeighbourhood implements NeighbourStrategy {
     }
 
     protected Map.Entry<Integer, Integer> selectIndexes(Path first, Path second, int nbElementToSwap) {
-        int firstIndex = 1;
-        int secondIndex = 1;
+        int firstIndex = 0;
+        int secondIndex = 0;
 
         // TODO: 28/04/2018 Workaround (remove first and last from path before sending it)
-        if (first.getNodes().size() > 2 && second.getNodes().size() > 2) {
-            firstIndex = random.nextInt(first.getNodes().size() - nbElementToSwap - 1) + 1;
-            secondIndex = random.nextInt(second.getNodes().size() - nbElementToSwap - 1) + 1;
+        if (first.getTrimmed().size() > 1 && second.getTrimmed().size() > 1) {
+            firstIndex = random.nextInt(first.getTrimmed().size() - nbElementToSwap);
+            secondIndex = random.nextInt(second.getTrimmed().size() - nbElementToSwap);
         }
 
         return  new AbstractMap.SimpleEntry<>(firstIndex, secondIndex);
