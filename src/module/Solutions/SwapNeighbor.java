@@ -25,6 +25,6 @@ public class SwapNeighbor extends AbstractNeighbourhood {
         int size = Math.min(first.getNodes().size(), second.getNodes().size());
         nbElementToSwap = random.nextInt(size - 1);
         nbElementToSwap = 1;
-        // FIXME: 25/04/2018 Irindul : Nodes are deleted when nbElementToSwap > 2
+        // TODO: 28/04/2018 Converge mieux avec 1
     }
 }
