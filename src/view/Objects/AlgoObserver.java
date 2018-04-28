@@ -31,13 +31,11 @@ public class AlgoObserver implements Observer {
         generateColors(10);
     }
 
-    private void generateColors(int amount)
-    {
+    private void generateColors(int amount) {
         //Pool of colors for each path
         final Random random = Helpers.random;
 
-        while(colors.size() < amount)
-        {
+        while (colors.size() < amount) {
             for (int i = colors.size(); i < amount; i++) {
                 int red;
                 int blue;
@@ -52,38 +50,34 @@ public class AlgoObserver implements Observer {
 
             ListIterator<Color> itt = colors.listIterator();
             Color prevColor = itt.next();
-            while(itt.hasNext())
-            {
+            while (itt.hasNext()) {
                 Color currentColor = itt.next();
                 double redDiff = Math.abs(currentColor.getRed() - prevColor.getRed());
                 double greenDiff = Math.abs(currentColor.getGreen() - prevColor.getGreen());
                 double blueDiff = Math.abs(currentColor.getBlue() - prevColor.getBlue());
-                if(redDiff + greenDiff + blueDiff < 0.5)
-                {
+                if (redDiff + greenDiff + blueDiff < 0.5) {
                     itt.remove();
                 }
             }
         }
     }
 
-    public void drawPathInfo(Solution solution)
-    {
+    public void drawPathInfo(Solution solution) {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         int infoOffsetY = 10;
         Iterator<Color> colorIterator = colors.iterator();
         double oldLineWidth = gc.getLineWidth();
-        for(Path path : solution.getPaths())
-        {
+        for (Path path : solution.getPaths()) {
             Color c = colorIterator.next();
             gc.setFill(c);
             gc.setStroke(c);
             gc.setLineWidth(4);
             gc.strokeLine(350, infoOffsetY, 400, infoOffsetY);
             double distance = path.getDistance();
-            String text = "Distance: " + (distance == -1 ? "Not possible" : (Math.round(distance*10000.0)/10000.0));
-            text+= ", Charge: " + path.getCurrentCapacity() + "/" + path.getMaxCapacity();
-            gc.fillText(text, 410, infoOffsetY+4);
-            infoOffsetY+=20;
+            String text = "Distance: " + (distance == -1 ? "Not possible" : (Math.round(distance * 10000.0) / 10000.0));
+            text += ", Charge: " + path.getCurrentCapacity() + "/" + path.getMaxCapacity();
+            gc.fillText(text, 410, infoOffsetY + 4);
+            infoOffsetY += 20;
         }
         gc.setLineWidth(oldLineWidth);
     }
@@ -96,8 +90,7 @@ public class AlgoObserver implements Observer {
         gc.setLineWidth(1);
 
         // If we haven't generated enough colors
-        if(colors.size() < solution.getPaths().size())
-        {
+        if (colors.size() < solution.getPaths().size()) {
             generateColors(solution.getPaths().size());
         }
 
@@ -109,11 +102,8 @@ public class AlgoObserver implements Observer {
             gc.setFill(c);
             gc.setStroke(c);
 
+            List<Node> nodes = new ArrayList<>(path.getNodes());
 
-
-
-            List<Node> nodes = new ArrayList<>();
-            nodes.addAll(path.getNodes());
             // Setting the dots
             nodes.forEach(node -> {
                 gc.fillOval(node.getPosition().getX() * multiplier - offsetX,
@@ -140,26 +130,25 @@ public class AlgoObserver implements Observer {
         });
     }
 
-    private void drawAlgorithmInfo(Algorithm algorithm)
-    {
+    private void drawAlgorithmInfo(Algorithm algorithm) {
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.setFill(Color.YELLOWGREEN);
+        gc.setFill(Color.BLACK);
         double fitness = algorithm.getCurrentSolution().getFitness();
-        gc.fillText("Current solution: " + (fitness == Double.MAX_VALUE ? "Not possible" : fitness), 20, 20);
-        gc.setFill(Color.GREEN);
-        gc.fillText("Best solution: " + algorithm.getBestSolution().getFitness(), 20, 40);
+        int steps = algorithm.getSteps();
+        gc.fillText("Steps: " + steps, 20, 20);
+        gc.fillText("Current solution: " + (fitness == Double.MAX_VALUE ? "Not possible" : fitness), 20, 40);
+        gc.fillText("Best solution: " + algorithm.getBestSolution().getFitness(), 20, 60);
     }
 
     @Override
     public void update(Observable o, Object arg) {
         Algorithm algo = (Algorithm) o;
         Solution solutionToDraw = showBestSolution ? algo.getBestSolution() : algo.getCurrentSolution();
-        drawSolution(solutionToDraw);
-        drawAlgorithmInfo(algo);
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+
+        int steps = algo.getSteps();
+        if(steps % 10000 == 0) {
+           drawSolution(solutionToDraw);
+            drawAlgorithmInfo(algo);
         }
     }
 

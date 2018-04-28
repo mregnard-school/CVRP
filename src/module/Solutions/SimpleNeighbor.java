@@ -34,14 +34,11 @@ public class SimpleNeighbor implements NeighbourStrategy{
             nbElementToSwap = 1;
             // FIXME: 25/04/2018 Irindul : Nodes are deleted when nbElementToSwap > 2
 
-            int firstIndex = rand.nextInt(first.getNodes().size() - nbElementToSwap);
-            int secondIndex = rand.nextInt(second.getNodes().size() - nbElementToSwap);
+            int firstIndex = rand.nextInt(first.getNodes().size() - nbElementToSwap -1) + 1;
+            int secondIndex = rand.nextInt(second.getNodes().size() - nbElementToSwap -1) + 1;
 
             if(first.equals(second)) {
                Path path =  swapper.swapSame(nbElementToSwap, firstIndex, secondIndex);
-               /*System.out.println(path);
-               System.out.println(first);
-               System.out.println();*/
                replacePath(path);
             } else {
                 Map.Entry<Path, Path> swapped  = swapper.swap(nbElementToSwap, firstIndex, secondIndex);

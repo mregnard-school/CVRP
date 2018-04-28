@@ -4,6 +4,7 @@ import module.Node;
 import module.Path;
 import module.Solutions.SimpleNeighbor;
 import module.Solutions.Solution;
+import module.Solutions.StealNeighbour;
 import module.Solutions.SwapNeighbourhood;
 import module.utils.Helpers;
 
@@ -11,7 +12,6 @@ import java.util.*;
 
 public class SimulatedAnnealing extends Algorithm {
 
-    private int steps;
     private final int maxStep;
     private final Random random;
     private final double initialAcceptance;
@@ -31,6 +31,7 @@ public class SimulatedAnnealing extends Algorithm {
         this.maxAcceptance = maxAcceptance;
         mu = 0.9995;
         initializeTemperature();
+        System.out.println(temparature());
     }
 
     @Override
@@ -68,6 +69,7 @@ public class SimulatedAnnealing extends Algorithm {
         currentTemperature = initialTemperature;
         System.out.println("Delta : " + delta);
         System.out.println("Initial temp : " + initialTemperature);
+        currentTemperature = 50;
     }
 
     private double calculateDelta() {
@@ -87,8 +89,11 @@ public class SimulatedAnnealing extends Algorithm {
         if (hasNext()) {
             steps++;
             double temperature = temparature();
+            setNeighbourhoodStrategy();
+
             Set<Solution> neighbors = currentSolution.getNextValidSolutions();
             Solution nextSolution = pickRandom(neighbors);
+
             double probability = random.nextDouble();
             if (acceptanceProbability(currentSolution, nextSolution, temperature) >= probability) {
                 currentSolution = nextSolution;
@@ -99,6 +104,15 @@ public class SimulatedAnnealing extends Algorithm {
 
             setChanged();
             notifyObservers();
+        }
+    }
+
+    private void setNeighbourhoodStrategy() {
+        int rd = random.nextInt();
+        if (rd % 2 == 0) {
+            currentSolution.setNeighbourStrategy(new SimpleNeighbor());
+        } else {
+            currentSolution.setNeighbourStrategy(new StealNeighbour());
         }
     }
 
@@ -131,5 +145,9 @@ public class SimulatedAnnealing extends Algorithm {
         }
 
         return Math.exp(-(secondFitness - firstFitness) / temperature);
+    }
+
+    public int getSteps() {
+        return steps;
     }
 }

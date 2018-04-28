@@ -20,7 +20,6 @@ public class AlgoThreadObj implements Runnable {
                 // System.out.println(algorithm.getBestSolution().getFitness());
             }
         }
-
     }
 
     public Algorithm getAlgorithm() {
