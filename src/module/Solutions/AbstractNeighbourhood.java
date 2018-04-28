@@ -72,6 +72,19 @@ public abstract class AbstractNeighbourhood implements NeighbourStrategy {
         solutions = new HashSet<>();
         solution = new Solution(copy, this);
         solutions.add(solution);
-
     }
+
+    protected Map.Entry<Integer, Integer> selectIndexes(Path first, Path second, int nbElementToSwap) {
+        int firstIndex = 1;
+        int secondIndex = 1;
+
+        // TODO: 28/04/2018 Workaround (remove first and last from path before sending it)
+        if (first.getNodes().size() > 2 && second.getNodes().size() > 2) {
+            firstIndex = random.nextInt(first.getNodes().size() - nbElementToSwap - 1) + 1;
+            secondIndex = random.nextInt(second.getNodes().size() - nbElementToSwap - 1) + 1;
+        }
+
+        return  new AbstractMap.SimpleEntry<>(firstIndex, secondIndex);
+    }
+
 }
