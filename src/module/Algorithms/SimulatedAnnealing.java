@@ -85,8 +85,10 @@ public class SimulatedAnnealing extends Algorithm {
         ) / Math.log(mu);
 
         currentTemperature = initialTemperature;
+        currentTemperature = 10;
         System.out.println("Delta : " + delta);
         System.out.println("Initial temp : " + initialTemperature);
+
     }
 
     private double calculateDelta() {
@@ -174,7 +176,7 @@ public class SimulatedAnnealing extends Algorithm {
         double firstFitness = first.getFitness();
         double secondFitness = second.getFitness();
 
-        if (firstFitness < secondFitness) {
+        if (secondFitness < firstFitness) {
             return 1;
         }
 

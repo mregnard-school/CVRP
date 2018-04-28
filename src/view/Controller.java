@@ -86,7 +86,7 @@ public class Controller {
     @FXML
     private void changeAlgorithm(ActionEvent event) {
         System.out.println("Initializing algorithm");
-        List<Node> nodes = NodeReader.getNodes("data/data01.txt");
+        List<Node> nodes = NodeReader.getNodes("data/data02.txt");
         initializeAlgorithm(event, new SimulatedAnnealing(100000, 0.8, 0.01, nodes), nodes);
     }
 

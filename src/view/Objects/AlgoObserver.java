@@ -24,7 +24,7 @@ public class AlgoObserver implements Observer {
         this.multiplier = multiplier;
         this.offsetX = offsetX;
         this.offsetY = offsetY;
-        this.showBestSolution = false;
+        this.showBestSolution = true;
 
         colors = new ArrayList<>();
 
@@ -155,6 +155,7 @@ public class AlgoObserver implements Observer {
         drawSolution(solutionToDraw);
         drawAlgorithmInfo(algorithm);
     }
+
 
     public void setShowBestSolution(boolean showBestSolution) {
         this.showBestSolution = showBestSolution;
