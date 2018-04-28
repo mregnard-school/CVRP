@@ -6,7 +6,7 @@ import module.utils.PathSwapper;
 
 import java.util.*;
 
-public class SwapNeighbourhood implements NeighbourStrategy {
+public class PermutationNeighbourhood implements NeighbourStrategy {
 
     private int firstIndex;
     private int secondIndex;

@@ -4,7 +4,7 @@ import module.Path;
 
 import java.util.Map;
 
-public class SimpleNeighbor extends AbstractNeighbourhood {
+public class SwapNeighbor extends AbstractNeighbourhood {
 
     private Path first;
     private Path second;

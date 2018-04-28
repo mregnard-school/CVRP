@@ -68,7 +68,7 @@ public class SimulatedAnnealing extends Algorithm {
         });
 
         paths.forEach(Path::recompute);
-        currentSolution = new Solution(paths, new SimpleNeighbor());
+        currentSolution = new Solution(paths, new SwapNeighbor());
         bestSolution = currentSolution;
     }
 
@@ -88,7 +88,7 @@ public class SimulatedAnnealing extends Algorithm {
     }
 
     private double calculateDelta() {
-        currentSolution.setNeighbourStrategy(new SwapNeighbourhood());
+        currentSolution.setNeighbourStrategy(new PermutationNeighbourhood());
         Set<Solution> neighbours = currentSolution.getNextValidSolutions();
         currentSolution.setNeighbourStrategy(new StealNeighbour());
 
@@ -127,7 +127,7 @@ public class SimulatedAnnealing extends Algorithm {
 
         switch (rd) {
             case 0:
-                currentSolution.setNeighbourStrategy(new SimpleNeighbor());
+                currentSolution.setNeighbourStrategy(new SwapNeighbor());
                 break;
             case 1:
                 currentSolution.setNeighbourStrategy(new SwapSameNeighbourhood());
