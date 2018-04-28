@@ -13,7 +13,7 @@ public abstract class AbstractNeighbourhood implements NeighbourStrategy {
     protected PathSwapper swapper;
     protected Map.Entry<Path, Path> selected;
     protected Map.Entry<Path, Path> modified;
-    private Set<Path> copy;
+    protected Set<Path> copy;
     private Set<Solution> solutions;
 
     @Override
@@ -34,7 +34,7 @@ public abstract class AbstractNeighbourhood implements NeighbourStrategy {
         return solutions;
     }
 
-    private Map.Entry<Path, Path> selectTwoDifferentPath() {
+    protected Map.Entry<Path, Path> selectTwoDifferentPath() {
         Path first;
         Path second;
         do {
