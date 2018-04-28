@@ -25,6 +25,7 @@ public abstract class AbstractNeighbourhood implements NeighbourStrategy {
 
             modified = neighbourhoodCalculation();
 
+            copy = new HashSet<>(paths);
             cleanPaths(modified.getKey(), modified.getValue());
             setNewSolution();
         } while (!this.solution.isValid());
@@ -44,7 +45,7 @@ public abstract class AbstractNeighbourhood implements NeighbourStrategy {
         return new AbstractMap.SimpleEntry<>(first, second);
     }
 
-    private Path selectRandomPath() {
+    protected Path selectRandomPath() {
         int rdIndex = random.nextInt(paths.size());
 
         return paths.stream()
@@ -55,13 +56,12 @@ public abstract class AbstractNeighbourhood implements NeighbourStrategy {
 
     protected abstract Map.Entry<Path, Path> neighbourhoodCalculation();
 
-    private void cleanPaths(Path key, Path value) {
-        copy = new HashSet<>(paths);
+    protected void cleanPaths(Path key, Path value) {
         cleanPath(selected.getKey(), key);
         cleanPath(selected.getValue(), value);
     }
 
-    private void cleanPath(Path pathToRemove, Path pathToAdd) {
+    protected void cleanPath(Path pathToRemove, Path pathToAdd) {
         copy.remove(pathToRemove);
         if (pathToAdd.getNodes().size() > 1) {
             copy.add(pathToAdd);
@@ -72,5 +72,6 @@ public abstract class AbstractNeighbourhood implements NeighbourStrategy {
         solutions = new HashSet<>();
         solution = new Solution(copy, this);
         solutions.add(solution);
+
     }
 }

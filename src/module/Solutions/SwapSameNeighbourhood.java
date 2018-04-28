@@ -1,58 +1,45 @@
 package module.Solutions;
 
 import module.Path;
-import module.utils.Helpers;
 import module.utils.PathSwapper;
 
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import java.util.AbstractMap;
+import java.util.Map;
 
-public class SwapSameNeighbourhood implements NeighbourStrategy {
+public class SwapSameNeighbourhood extends AbstractNeighbourhood {
 
-    private Random rand = Helpers.random;
-    private Path path;
-    private Solution solution;
-    private Set<Path> paths;
+    Path path;
+    int firstIndex;
+    int secondIndex;
+    int nbElementToSwap;
 
     @Override
-    public Set<Solution> getNeighbourhood(Solution solution) {
-        paths = solution.getPaths();
-
-        int rd = rand.nextInt(paths.size());
-
-        path = solution.getPaths().stream().skip(rd).findFirst().orElseThrow(IndexOutOfBoundsException::new);
-
-        int nbElementToSwap = 1;
-
-        int firstIndex;
-        int secondIndex;
-
-        // TODO: 28/04/2018 Workaround
-        if (path.getNodes().size() == 2) {
-            firstIndex = 1;
-            secondIndex = 1;
-        } else {
-            firstIndex = rand.nextInt(path.getNodes().size() - nbElementToSwap - 1) + 1;
-            secondIndex = rand.nextInt(path.getNodes().size() - nbElementToSwap - 1) + 1;
-        }
+    protected Map.Entry<Path, Path> neighbourhoodCalculation() {
+        path = selected.getKey();
+        nbElementToSwap = 1;
+        selectIndexes();
 
         PathSwapper pathSwapper = new PathSwapper(path, path);
-        pathSwapper.swapSame(nbElementToSwap, firstIndex, secondIndex);
-        replacePath(path);
+        Path modified = pathSwapper.swapSame(nbElementToSwap, firstIndex, secondIndex);
 
-        Set<Solution> solutions = new HashSet<>();
-        solutions.add(this.solution);
-
-        return solutions;
+        return new AbstractMap.SimpleEntry<>(modified, modified);
     }
 
-    private void replacePath(Path path) {
-        Set<Path> pathCopy = new HashSet<>(paths);
 
-        pathCopy.remove(this.path);
-        pathCopy.add(path);
-
-        solution = new Solution(pathCopy, this);
+    @Override
+    protected void cleanPaths(Path key, Path value) {
+        cleanPath(selected.getKey(), key);
     }
+
+    private void selectIndexes() {
+        firstIndex = 1;
+        secondIndex = 1;
+
+        // TODO: 28/04/2018 Workaround (remove first and last from path before sending it)
+        if (path.getNodes().size() > 2) {
+            firstIndex = random.nextInt(path.getNodes().size() - nbElementToSwap - 1) + 1;
+            secondIndex = random.nextInt(path.getNodes().size() - nbElementToSwap - 1) + 1;
+        }
+    }
+
 }
