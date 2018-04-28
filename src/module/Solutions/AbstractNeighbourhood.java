@@ -14,24 +14,30 @@ public abstract class AbstractNeighbourhood implements NeighbourStrategy {
     protected Map.Entry<Path, Path> selected;
     protected Map.Entry<Path, Path> modified;
     protected Set<Path> copy;
-    private Set<Solution> solutions;
+    protected Set<Solution> solutions;
 
     @Override
     public Set<Solution> getNeighbourhood(Solution solution) {
         paths = solution.getPaths();
         do {
-            selected = selectTwoDifferentPath();
-            swapper = new PathSwapper(selected.getKey(), selected.getValue());
-
-            modified = neighbourhoodCalculation();
-
-            copy = new HashSet<>(paths);
-            cleanPaths(modified.getKey(), modified.getValue());
-            setNewSolution();
-        } while (!this.solution.isValid());
-
+           calculateNextSolutions();
+        } while (notValid());
 
         return solutions;
+    }
+
+    public void calculateNextSolutions() {
+        initialize();
+
+        modified = neighbourhoodCalculation();
+
+        cleanUp();
+        setNewSolution();
+    }
+
+    protected void initialize() {
+        selected = selectTwoDifferentPath();
+        swapper = new PathSwapper(selected.getKey(), selected.getValue());
     }
 
     protected Map.Entry<Path, Path> selectTwoDifferentPath() {
@@ -56,6 +62,11 @@ public abstract class AbstractNeighbourhood implements NeighbourStrategy {
 
     protected abstract Map.Entry<Path, Path> neighbourhoodCalculation();
 
+    protected void cleanUp() {
+        copy = new HashSet<>(paths);
+        cleanPaths(modified.getKey(), modified.getValue());
+    }
+
     protected void cleanPaths(Path key, Path value) {
         cleanPath(selected.getKey(), key);
         cleanPath(selected.getValue(), value);
@@ -68,10 +79,18 @@ public abstract class AbstractNeighbourhood implements NeighbourStrategy {
         }
     }
 
-    private void setNewSolution() {
+    protected void setNewSolution() {
         solutions = new HashSet<>();
         solution = new Solution(copy, this);
         solutions.add(solution);
+    }
+
+    private boolean notValid() {
+        return !valid();
+    }
+
+    protected boolean valid() {
+       return this.solution.isValid();
     }
 
     protected Map.Entry<Integer, Integer> selectIndexes(Path first, Path second, int nbElementToSwap) {
