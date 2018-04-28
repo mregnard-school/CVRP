@@ -109,6 +109,7 @@ public class PathSwapper {
 
         Path path = new Path();
         path.addAllNodes(nodeCopy);
+        path.startAndEndingPoint(first.getWarehouse());
         return path;
     }
 

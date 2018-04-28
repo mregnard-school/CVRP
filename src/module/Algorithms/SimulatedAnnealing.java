@@ -84,7 +84,7 @@ public class SimulatedAnnealing extends Algorithm {
         ) / Math.log(mu);
 
         currentTemperature = initialTemperature;
-        currentTemperature = 10;
+        currentTemperature = 100;
         System.out.println("Delta : " + delta);
         System.out.println("Initial temp : " + initialTemperature);
 
