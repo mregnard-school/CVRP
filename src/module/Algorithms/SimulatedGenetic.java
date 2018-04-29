@@ -130,14 +130,16 @@ public class SimulatedGenetic extends Algorithm {
             }
 
             Solution tmpBestSolution = bestSolutions.get(0);
+            //System.out.println("bestSolution : " + bestSolution.getFitness());
             for(Solution s : bestSolutions)
             {
+                //System.out.println("\t" + s.getFitness());
                 if(s.getFitness() < tmpBestSolution.getFitness())
                 {
                     tmpBestSolution = s;
                 }
             }
-
+            currentSolution = tmpBestSolution;
             bestSolution = bestSolution.getFitness() < tmpBestSolution.getFitness() ? bestSolution : tmpBestSolution;
 
 
