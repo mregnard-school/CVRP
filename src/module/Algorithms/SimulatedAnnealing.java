@@ -67,14 +67,12 @@ public class SimulatedAnnealing extends Algorithm {
 
             double acceptance = acceptanceProbability(currentSolution, nextSolution, temperature);
             if (acceptance >= probability) {
-                System.out.println("accepted");
                 currentSolution = nextSolution;
                 if (currentSolution.getFitness() < bestSolution.getFitness()) {
                     bestSolution = currentSolution;
                 }
             }
 
-            System.out.println("Temp : " + temperature);
             setChanged();
             notifyObservers();
         }
