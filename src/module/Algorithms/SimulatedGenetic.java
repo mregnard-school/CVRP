@@ -89,7 +89,7 @@ public class SimulatedGenetic extends Algorithm {
             while(bestSolutions.size() < 10 && failSafe < 100)
             {
                 double randomPick = random.nextInt((int)rouletteSize);
-                int fitnessSum = 0;
+                double fitnessSum = 0;
                 tmpSolution = null;
                 for(Solution s : currentSolutions)
                 {
@@ -102,10 +102,6 @@ public class SimulatedGenetic extends Algorithm {
                 }
                 if(!bestSolutions.contains(tmpSolution))
                 {
-                    if(tmpSolution == null)
-                    {
-                        
-                    }
                     bestSolutions.add(tmpSolution);
                     failSafe = 0;
                 }
