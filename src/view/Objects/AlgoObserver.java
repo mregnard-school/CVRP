@@ -4,6 +4,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ComboBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import module.Algorithms.Algorithm;
 import module.Node;
 import module.Path;
@@ -20,9 +21,14 @@ public class AlgoObserver implements Observer {
     private boolean showBestSolution;
     private List<Color> colors;
     private boolean displayNextStep = false;
+    private GraphicsContext gc;
+    private Font defaultFont;
 
     public AlgoObserver(Canvas canvas, double multiplier, double offsetX, double offsetY) {
         this.canvas = canvas;
+        this.gc = canvas.getGraphicsContext2D();
+        this.defaultFont = new Font(this.gc.getFont().getName(), 12);
+        this.gc.setFont(this.defaultFont);
         this.multiplier = multiplier;
         this.offsetX = offsetX;
         this.offsetY = offsetY;
@@ -65,7 +71,6 @@ public class AlgoObserver implements Observer {
     }
 
     public void drawPathInfo(Solution solution) {
-        GraphicsContext gc = canvas.getGraphicsContext2D();
         int infoOffsetY = 10;
         Iterator<Color> colorIterator = colors.iterator();
         double oldLineWidth = gc.getLineWidth();
@@ -139,7 +144,14 @@ public class AlgoObserver implements Observer {
         int steps = algorithm.getSteps();
         gc.fillText("Steps: " + steps, 20, 20);
         gc.fillText("Current solution: " + (fitness == Double.MAX_VALUE ? "Not possible" : fitness), 20, 40);
+
+        if(!algorithm.hasNext())
+        {
+            gc.setFill(Color.GREEN);
+            gc.setFont(new Font(gc.getFont().getName(), 20));
+        }
         gc.fillText("Best solution: " + algorithm.getBestSolution().getFitness(), 20, 60);
+        if(!algorithm.hasNext()) { gc.setFont(defaultFont); }
     }
 
     @Override
@@ -156,6 +168,7 @@ public class AlgoObserver implements Observer {
         {
             canvas.getScene().lookup("#algoDropdown").setDisable(false);
             canvas.getScene().lookup("#datasetDropdown").setDisable(false);
+            canvas.getScene().lookup("#stopButton").setDisable(false);
         }
     }
 

@@ -30,18 +30,24 @@
                 <Insets right="5.0" />
               </HBox.margin>
             </Button>
-            <Button fx:id="stopButton" mnemonicParsing="false" onAction="#stopButtonClick" text="Stop" disable="true">
+            <Button fx:id="stopButton" mnemonicParsing="false" onAction="#stopButtonClick" text="Reset" disable="true">
               <HBox.margin>
                 <Insets right="5.0" />
               </HBox.margin>
             </Button>
             <ComboBox fx:id="algoDropdown" onAction="#reset" value="Please select an algorithm">
+              <HBox.margin>
+                <Insets right="5.0" />
+              </HBox.margin>
             </ComboBox>
             <ComboBox fx:id="datasetDropdown" onAction="#reset" value="Please select a data set">
+              <HBox.margin>
+                <Insets right="5.0" />
+              </HBox.margin>
             </ComboBox>
             <CheckBox fx:id="showBestSolution" mnemonicParsing="false" onAction="#showBestSolutionClick" prefHeight="25.0" prefWidth="157.0" selected="true" text="Show best solution">
               <HBox.margin>
-                <Insets left="10.0" />
+                <Insets right="5.0" />
               </HBox.margin>
             </CheckBox>
           </children>

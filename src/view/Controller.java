@@ -108,29 +108,28 @@ public class Controller {
     @FXML
     private void reset() {
         System.out.println("Initializing algorithm");
-
+        algoDropdown.setDisable(false);
+        datasetDropdown.setDisable(false);
         List<Node> nodes = NodeReader.getNodes("data/data01.txt");
         initializeAlgorithm(new SimulatedAnnealing(100000, nodes), nodes);
+        started = false;
     }
 
     @FXML
     private void playButtonClick(ActionEvent event) {
         if(algoThread != null){
+            algoDropdown.setDisable(true);
+            datasetDropdown.setDisable(true);
+            stepButton.setDisable(true);
+            stopButton.setDisable(true);
             if(!started){
                 algoThread.start();
                 started = true;
-                algoDropdown.setDisable(true);
-                datasetDropdown.setDisable(true);
-                stepButton.setDisable(true);
-                stopButton.setDisable(true);
-
                 playButton.setText("Pause");
             } else {
                 algoThreadObj.toggle();
                 String text = algoThreadObj.isRunning() ? "Pause" : "Play";
                 playButton.setText(text);
-                algoDropdown.setDisable(false);
-                datasetDropdown.setDisable(false);
                 stepButton.setDisable(false);
                 stopButton.setDisable(false);
             }
