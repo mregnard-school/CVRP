@@ -3,6 +3,7 @@ package module.Algorithms;
 import module.Node;
 import module.Path;
 import module.Solutions.*;
+import module.exceptions.SolutionSwapper;
 import module.utils.Helpers;
 
 import java.util.*;
@@ -51,13 +52,105 @@ public class SimulatedGenetic extends Algorithm {
         if (hasNext()) {
             steps++;
 
-            Set<Solution> solutions = currentSolution.getNextValidSolutions();
-            int rouletteSize = 0;
-            solutions.
-            if(currentSolution.getFitness() < bestSolution.getFitness())
+            List<Solution> currentSolutions = new ArrayList<>();
+
+            currentSolution.setNeighbourStrategy(new SwapNeighbor());
+            Solution tmpSolution;
+            int failSafe = 0;
+            while(currentSolutions.size() < 100 && failSafe < 100)
+            {
+                tmpSolution = currentSolution.getNextValidSolutions().iterator().next();
+                if(currentSolutions.add(tmpSolution))
+                {
+                    currentSolutions.add(tmpSolution);
+                    failSafe = 0;
+                }
+                else
+                {
+                    failSafe++;
+                }
+            }
+
+
+            /*currentSolution.setNeighbourStrategy(new SwapSameNeighbourhood());
+            solutions.addAll(currentSolution.getNextValidSolutions());
+            currentSolution.setNeighbourStrategy(new StealNeighbour());
+            solutions.addAll(currentSolution.getNextValidSolutions());*/
+            //System.out.println("Solutions: " + currentSolutions.size());
+            final double highestFitness = (currentSolutions.stream().max(Comparator.comparing( Solution::getFitness )).get().getFitness()*1.5);
+            double rouletteSize = currentSolutions.stream().mapToDouble(s -> (highestFitness - s.getFitness())).sum();
+
+            //System.out.println(rouletteSize);
+
+
+            List<Solution> bestSolutions = new ArrayList<>();
+
+            failSafe = 0;
+            while(bestSolutions.size() < 10 && failSafe < 100)
+            {
+                double randomPick = random.nextInt((int)rouletteSize);
+                int fitnessSum = 0;
+                tmpSolution = null;
+                for(Solution s : currentSolutions)
+                {
+                    if(randomPick >= fitnessSum && randomPick <= fitnessSum+(highestFitness-s.getFitness()))
+                    {
+                        tmpSolution = s;
+                        break;
+                    }
+                    fitnessSum+=highestFitness-s.getFitness();
+                }
+                if(!bestSolutions.contains(tmpSolution))
+                {
+                    if(tmpSolution == null)
+                    {
+                        
+                    }
+                    bestSolutions.add(tmpSolution);
+                    failSafe = 0;
+                }
+                else
+                {
+                    //System.out.println("damn");
+                    failSafe++;
+                }
+            }
+
+            //System.out.println("best solutions: " + bestSolutions.size());
+            for(int solOneIndex=0; solOneIndex<bestSolutions.size(); solOneIndex++)
+            {
+                int solTwoIndex;
+                do {
+                    solTwoIndex = random.nextInt(bestSolutions.size());
+                    //System.out.println(solOneIndex  + "!=" + solTwoIndex);
+                } while(solOneIndex == solTwoIndex);
+
+                if(bestSolutions.get(solOneIndex) == null)
+                {
+                    System.out.println("soleOneIndex: " + solOneIndex);
+                }
+                SolutionSwapper sw = new SolutionSwapper(bestSolutions.get(solOneIndex), bestSolutions.get(solTwoIndex));
+                sw.swap();
+            }
+
+            Solution tmpBestSolution = bestSolutions.get(0);
+            for(Solution s : bestSolutions)
+            {
+                if(s.getFitness() < tmpBestSolution.getFitness())
+                {
+                    tmpBestSolution = s;
+                }
+            }
+
+            bestSolution = bestSolution.getFitness() < tmpBestSolution.getFitness() ? bestSolution : tmpBestSolution;
+
+
+
+
+            /*if(currentSolution.getFitness() < bestSolution.getFitness())
             {
                 bestSolution = currentSolution;
-            }
+            }*/
 
 
             setChanged();
@@ -67,6 +160,7 @@ public class SimulatedGenetic extends Algorithm {
 
     @Override
     public boolean hasNext() {
+        //System.out.println(steps + "<" + maxStep);
         return steps < maxStep;
     }
 
