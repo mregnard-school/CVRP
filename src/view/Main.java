@@ -56,7 +56,7 @@ public class Main extends Application {
         System.out.println(second);
         System.out.println();
 
-        PathSwapper swapper = new PathSwapper(first, second);
+        SolutionSwapper swapper = new SolutionSwapper(first, second);
         swapper.swap();*/
     }
 }

@@ -37,7 +37,7 @@ public class SolutionSwapper {
                         index = secondP.indexOfPath(firstP.getNodes().subList(offset, offset+cut));
                         if(index != -1)
                         {
-                            System.out.println("I just found something");
+                            //System.out.println("I just found something");
                             return true;
                         }
                     }
