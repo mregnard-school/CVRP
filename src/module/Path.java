@@ -43,6 +43,7 @@ public class Path {
             return false;
         }
         nodes.add(node);
+        computeCapacity();
         return true;
     }
 

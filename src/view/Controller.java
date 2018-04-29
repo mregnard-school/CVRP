@@ -7,6 +7,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import module.Algorithms.Algorithm;
 import module.Algorithms.SimulatedAnnealing;
+import module.Algorithms.SimulatedGenetic;
 import module.Node;
 import module.NodeReader;
 import module.exceptions.ComparingException;
@@ -42,6 +43,7 @@ public class Controller {
 
     public void initialize() {
         algoDropdown.getItems().addAll(
+                "Simulated Genetic",
                 "Simulated Annealing"
         );
 
@@ -127,7 +129,16 @@ public class Controller {
         algoDropdown.setDisable(false);
         datasetDropdown.setDisable(false);
         List<Node> nodes = NodeReader.getNodes("data/" + datasetDropdown.getValue());
-        initializeAlgorithm(new SimulatedAnnealing(100000, nodes), nodes);
+
+        if(algoDropdown.getValue().equals("Simulated Annealing"))
+        {
+            initializeAlgorithm(new SimulatedAnnealing(100000, nodes), nodes);
+
+        }
+        else if(algoDropdown.getValue().equals("Simulated Genetic"))
+        {
+            initializeAlgorithm(new SimulatedGenetic(100000, nodes), nodes);
+        }
         started = false;
     }
 
