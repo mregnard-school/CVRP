@@ -2,7 +2,10 @@ package module.Algorithms;
 
 import module.Node;
 import module.Path;
-import module.Solutions.*;
+import module.Solutions.Solution;
+import module.Solutions.StealNeighbour;
+import module.Solutions.SwapNeighbor;
+import module.Solutions.SwapSameNeighbourhood;
 import module.utils.Helpers;
 
 import java.util.*;
@@ -18,40 +21,16 @@ public class SimulatedAnnealing extends Algorithm {
     private final static int MAX_CAPACITY = 100;
 
     public SimulatedAnnealing(int maxStep, List<Node> paths) {
-        initializeAPathByNode(paths);
+        initialize(paths);
         steps = 0;
         this.maxStep = maxStep;
         random = Helpers.random;
-        mu = 0.9995;
+        mu = 0.99999999;
         initializeTemperature();
     }
 
     @Override
     public void initialize(List<Node> nodes) {
-        Set<Path> paths = new HashSet<>();
-        Node centralNode = nodes.get(0);
-
-        Path currentPath = new Path(MAX_CAPACITY);
-        currentPath.addNode(centralNode);
-
-        for (Node node : nodes.subList(1, nodes.size())) { // We skip the first node, as it's the central
-            if (!currentPath.canAddNode(node)) {
-                currentPath.recompute();
-                paths.add(currentPath);
-                currentPath = new Path(MAX_CAPACITY);
-                currentPath.addNode(centralNode);
-                currentPath.addNode(node);
-            } else {
-                currentPath.addNode(node);
-            }
-        }
-        // TODO: 25/04/2018 Add centralNode at the end of each path
-        currentSolution = new Solution(paths, new StealNeighbour());
-        bestSolution = currentSolution;
-    }
-
-    private void initializeAPathByNode(List<Node> nodes) {
-
         Set<Path> paths = new HashSet<>();
         Node warehouse = nodes.get(0);
         nodes.stream().skip(1).forEach(node -> {
@@ -70,7 +49,9 @@ public class SimulatedAnnealing extends Algorithm {
     }
 
     private void initializeTemperature() {
-        currentTemperature = 100;
+        //Gives 100 for 30 nodes and 500 for 60 nodes
+        currentTemperature = currentSolution.getPaths().size() * 10 / 3;
+        currentTemperature = 10;
     }
 
     @Override
@@ -83,20 +64,34 @@ public class SimulatedAnnealing extends Algorithm {
             Solution nextSolution = pickRandom(neighbors);
 
             double probability = random.nextDouble();
-            if (acceptanceProbability(currentSolution, nextSolution, temperature) >= probability) {
+
+            double acceptance = acceptanceProbability(currentSolution, nextSolution, temperature);
+            if (acceptance >= probability) {
+                System.out.println("accepted");
                 currentSolution = nextSolution;
                 if (currentSolution.getFitness() < bestSolution.getFitness()) {
                     bestSolution = currentSolution;
                 }
             }
 
+            System.out.println("Temp : " + temperature);
             setChanged();
             notifyObservers();
         }
     }
 
+    @Override
+    public boolean hasNext() {
+        return steps < maxStep && currentTemperature > Math.pow(10, -5);
+    }
+
+    private double temparature() {
+        currentTemperature = currentTemperature * mu;
+        return currentTemperature;
+    }
+
     private void setNeighbourhoodStrategy() {
-        int rd = random.nextInt(4);
+        int rd = random.nextInt(3);
 
         switch (rd) {
             case 0:
@@ -108,22 +103,9 @@ public class SimulatedAnnealing extends Algorithm {
             case 2:
                 currentSolution.setNeighbourStrategy(new StealNeighbour());
                 break;
-            case 3:
-                currentSolution.setNeighbourStrategy(new AddPathNeighbor());
-                break;
             default:
                 break;
         }
-    }
-
-    @Override
-    public boolean hasNext() {
-        return steps < maxStep;
-    }
-
-    private double temparature() {
-        currentTemperature = currentTemperature * mu;
-        return currentTemperature;
     }
 
     private Solution pickRandom(Set<Solution> solutions) {
