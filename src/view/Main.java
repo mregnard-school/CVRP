@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -14,6 +15,7 @@ public class Main extends Application {
         FXMLLoader loader =new FXMLLoader(getClass().getResource("sample.fxml"));
         Parent root = loader.load();
         controller = loader.getController();
+
         primaryStage.setTitle("Annealing Algo");
         primaryStage.setScene(new Scene(root, 1024, 768));
 

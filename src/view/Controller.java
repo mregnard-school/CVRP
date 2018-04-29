@@ -3,9 +3,8 @@ package view;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import module.Algorithms.Algorithm;
 import module.Algorithms.SimulatedAnnealing;
 import module.Node;
@@ -16,19 +15,63 @@ import view.Objects.AlgoThreadObj;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Controller {
     private AlgoThreadObj algoThreadObj;
     private Thread algoThread;
     private AlgoObserver algoObserver;
     private boolean started;
-
+    @FXML
+    private AnchorPane anchorPane;
+    @FXML
+    private ComboBox algoDropdown;
+    @FXML
+    private ComboBox datasetDropdown;
+    @FXML
+    private Canvas mapCanvas;
     @FXML
     private Button playButton;
+    @FXML
+    private Button stepButton;
+    @FXML
+    private Button stopButton;
+    @FXML
+    private TextField maxIterationsInput;
+
+    public void initialize() {
+        algoDropdown.getItems().addAll(
+                "Simulated Annealing"
+        );
+
+        datasetDropdown.getItems().addAll(
+                "data01.txt",
+                "data02.txt",
+                "data03.txt",
+                "data04.txt",
+                "data05.txt"
+        );
+
+        maxIterationsInput.textProperty().addListener((obs, oldText, newText) -> {
+            /*Pattern p = Pattern.compile("\\d");
+            Matcher m = p.matcher(newText);
+            if(!m.matches())
+            {
+                maxIterationsInput.setText(oldText);
+            }
+            System.out.println("Text changed from "+oldText+" to "+newText);*/
+            // ...
+        });
 
 
-    private void initializeAlgorithm(ActionEvent event, Algorithm algorithm, List<Node> nodes) {
-        Canvas mapCanvas = (Canvas)((ComboBox)event.getSource()).getScene().lookup("#mapCanvas");
+
+        algoDropdown.setValue(algoDropdown.getItems().get(0));
+        datasetDropdown.setValue(datasetDropdown.getItems().get(0));
+        algoDropdown.fireEvent(new ActionEvent());
+    }
+
+    private void initializeAlgorithm(Algorithm algorithm, List<Node> nodes) {
         mapCanvas.prefHeight(750);
         mapCanvas.prefWidth(750);
         mapCanvas.setWidth(750);
@@ -70,25 +113,36 @@ public class Controller {
             );
 
             algorithm.addObserver(algoObserver);
-            algoThreadObj = new AlgoThreadObj(algorithm);
+            algoThreadObj = new AlgoThreadObj(algorithm, algoObserver);
             algoThread = new Thread(algoThreadObj);
             algoObserver.display(algorithm);
         } catch (ComparingException e){
             e.printStackTrace();
         }
-
     }
 
     @FXML
-    private void changeAlgorithm(ActionEvent event) {
+    private void reset() {
         System.out.println("Initializing algorithm");
-        List<Node> nodes = NodeReader.getNodes("data/data01.txt");
-        initializeAlgorithm(event, new SimulatedAnnealing(100000, nodes), nodes);
+        algoDropdown.setDisable(false);
+        datasetDropdown.setDisable(false);
+        List<Node> nodes = NodeReader.getNodes("data/" + datasetDropdown.getValue());
+        initializeAlgorithm(new SimulatedAnnealing(100000, nodes), nodes);
+        started = false;
+    }
+
+    @FXML
+    private void setMaxIterations() {
+        System.out.println("Setting max iterations");
     }
 
     @FXML
     private void playButtonClick(ActionEvent event) {
         if(algoThread != null){
+            algoDropdown.setDisable(true);
+            datasetDropdown.setDisable(true);
+            stepButton.setDisable(true);
+            stopButton.setDisable(true);
             if(!started){
                 algoThread.start();
                 started = true;
@@ -97,6 +151,8 @@ public class Controller {
                 algoThreadObj.toggle();
                 String text = algoThreadObj.isRunning() ? "Pause" : "Play";
                 playButton.setText(text);
+                stepButton.setDisable(false);
+                stopButton.setDisable(false);
             }
         }
     }
@@ -104,7 +160,17 @@ public class Controller {
     @FXML
     private void stepButtonClick(ActionEvent event) {
         if(algoThreadObj != null ){
+            algoObserver.setDisplayNextStep(true);
             algoThreadObj.getAlgorithm().next();
+        }
+    }
+
+    @FXML
+    private void stopButtonClick(ActionEvent event) {
+        algoDropdown.setDisable(false);
+        datasetDropdown.setDisable(false);
+        if(algoThreadObj != null ){
+            algoDropdown.fireEvent(new ActionEvent());
         }
     }
 
@@ -124,5 +190,4 @@ public class Controller {
             algoThread.interrupt();
         }
     }
-
 }
