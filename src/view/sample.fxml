@@ -51,7 +51,7 @@
                 <Insets right="5.0" />
               </HBox.margin>
             </CheckBox>
-            <TextField fx:id="maxIterationsInput" onAction="#setMaxIterations" prefHeight="25.0" prefWidth="157.0" text="100000">
+            <TextField fx:id="maxIterationsInput" prefHeight="25.0" prefWidth="157.0" text="100000">
               <HBox.margin>
                 <Insets right="5.0" />
               </HBox.margin>

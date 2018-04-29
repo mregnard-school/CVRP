@@ -3,9 +3,7 @@ package view;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import module.Algorithms.Algorithm;
 import module.Algorithms.SimulatedAnnealing;
@@ -17,6 +15,8 @@ import view.Objects.AlgoThreadObj;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Controller {
     private AlgoThreadObj algoThreadObj;
@@ -37,6 +37,8 @@ public class Controller {
     private Button stepButton;
     @FXML
     private Button stopButton;
+    @FXML
+    private TextField maxIterationsInput;
 
     public void initialize() {
         algoDropdown.getItems().addAll(
@@ -50,6 +52,20 @@ public class Controller {
                 "data04.txt",
                 "data05.txt"
         );
+
+        maxIterationsInput.textProperty().addListener((obs, oldText, newText) -> {
+            /*Pattern p = Pattern.compile("\\d");
+            Matcher m = p.matcher(newText);
+            if(!m.matches())
+            {
+                maxIterationsInput.setText(oldText);
+            }
+            System.out.println("Text changed from "+oldText+" to "+newText);*/
+            // ...
+        });
+
+
+
         algoDropdown.setValue(algoDropdown.getItems().get(0));
         datasetDropdown.setValue(datasetDropdown.getItems().get(0));
         algoDropdown.fireEvent(new ActionEvent());
@@ -110,7 +126,7 @@ public class Controller {
         System.out.println("Initializing algorithm");
         algoDropdown.setDisable(false);
         datasetDropdown.setDisable(false);
-        List<Node> nodes = NodeReader.getNodes("data/data01.txt");
+        List<Node> nodes = NodeReader.getNodes("data/" + datasetDropdown.getValue());
         initializeAlgorithm(new SimulatedAnnealing(100000, nodes), nodes);
         started = false;
     }
