@@ -6,6 +6,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.layout.AnchorPane;
 import module.Algorithms.Algorithm;
 import module.Algorithms.SimulatedAnnealing;
 import module.Node;
@@ -22,13 +23,39 @@ public class Controller {
     private Thread algoThread;
     private AlgoObserver algoObserver;
     private boolean started;
-
+    @FXML
+    private AnchorPane anchorPane;
+    @FXML
+    private ComboBox algoDropdown;
+    @FXML
+    private ComboBox datasetDropdown;
+    @FXML
+    private Canvas mapCanvas;
     @FXML
     private Button playButton;
+    @FXML
+    private Button stepButton;
+    @FXML
+    private Button stopButton;
 
+    public void initialize() {
+        algoDropdown.getItems().addAll(
+                "Simulated Annealing"
+        );
 
-    private void initializeAlgorithm(ActionEvent event, Algorithm algorithm, List<Node> nodes) {
-        Canvas mapCanvas = (Canvas)((ComboBox)event.getSource()).getScene().lookup("#mapCanvas");
+        datasetDropdown.getItems().addAll(
+                "data01.txt",
+                "data02.txt",
+                "data03.txt",
+                "data04.txt",
+                "data05.txt"
+        );
+        algoDropdown.setValue(algoDropdown.getItems().get(0));
+        datasetDropdown.setValue(datasetDropdown.getItems().get(0));
+        algoDropdown.fireEvent(new ActionEvent());
+    }
+
+    private void initializeAlgorithm(Algorithm algorithm, List<Node> nodes) {
         mapCanvas.prefHeight(750);
         mapCanvas.prefWidth(750);
         mapCanvas.setWidth(750);
@@ -70,20 +97,20 @@ public class Controller {
             );
 
             algorithm.addObserver(algoObserver);
-            algoThreadObj = new AlgoThreadObj(algorithm);
+            algoThreadObj = new AlgoThreadObj(algorithm, algoObserver);
             algoThread = new Thread(algoThreadObj);
             algoObserver.display(algorithm);
         } catch (ComparingException e){
             e.printStackTrace();
         }
-
     }
 
     @FXML
-    private void changeAlgorithm(ActionEvent event) {
+    private void reset() {
         System.out.println("Initializing algorithm");
+
         List<Node> nodes = NodeReader.getNodes("data/data01.txt");
-        initializeAlgorithm(event, new SimulatedAnnealing(100000, nodes), nodes);
+        initializeAlgorithm(new SimulatedAnnealing(100000, nodes), nodes);
     }
 
     @FXML
@@ -92,11 +119,20 @@ public class Controller {
             if(!started){
                 algoThread.start();
                 started = true;
+                algoDropdown.setDisable(true);
+                datasetDropdown.setDisable(true);
+                stepButton.setDisable(true);
+                stopButton.setDisable(true);
+
                 playButton.setText("Pause");
             } else {
                 algoThreadObj.toggle();
                 String text = algoThreadObj.isRunning() ? "Pause" : "Play";
                 playButton.setText(text);
+                algoDropdown.setDisable(false);
+                datasetDropdown.setDisable(false);
+                stepButton.setDisable(false);
+                stopButton.setDisable(false);
             }
         }
     }
@@ -104,7 +140,17 @@ public class Controller {
     @FXML
     private void stepButtonClick(ActionEvent event) {
         if(algoThreadObj != null ){
+            algoObserver.setDisplayNextStep(true);
             algoThreadObj.getAlgorithm().next();
+        }
+    }
+
+    @FXML
+    private void stopButtonClick(ActionEvent event) {
+        algoDropdown.setDisable(false);
+        datasetDropdown.setDisable(false);
+        if(algoThreadObj != null ){
+            algoDropdown.fireEvent(new ActionEvent());
         }
     }
 
@@ -124,5 +170,4 @@ public class Controller {
             algoThread.interrupt();
         }
     }
-
 }

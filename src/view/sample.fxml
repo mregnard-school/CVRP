@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.Controller">
+<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.Controller">
   <children>
     <BorderPane fx:id="grid" layoutX="0.0" layoutY="0.0" prefHeight="768.0" prefWidth="1024.0">
       <center>
@@ -30,12 +30,14 @@
                 <Insets right="5.0" />
               </HBox.margin>
             </Button>
-            <ComboBox fx:id="algoDropdown" onAction="#changeAlgorithm" value="Please select an algorithm">
-              <items>
-                <FXCollections fx:factory="observableArrayList">
-                  <String fx:value="Simulated Annealing" />
-                </FXCollections>
-              </items>
+            <Button fx:id="stopButton" mnemonicParsing="false" onAction="#stopButtonClick" text="Stop" disable="true">
+              <HBox.margin>
+                <Insets right="5.0" />
+              </HBox.margin>
+            </Button>
+            <ComboBox fx:id="algoDropdown" onAction="#reset" value="Please select an algorithm">
+            </ComboBox>
+            <ComboBox fx:id="datasetDropdown" onAction="#reset" value="Please select a data set">
             </ComboBox>
             <CheckBox fx:id="showBestSolution" mnemonicParsing="false" onAction="#showBestSolutionClick" prefHeight="25.0" prefWidth="157.0" selected="true" text="Show best solution">
               <HBox.margin>

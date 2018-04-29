@@ -2,6 +2,7 @@ package view.Objects;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.ComboBox;
 import javafx.scene.paint.Color;
 import module.Algorithms.Algorithm;
 import module.Node;
@@ -18,6 +19,7 @@ public class AlgoObserver implements Observer {
     private double offsetY;
     private boolean showBestSolution;
     private List<Color> colors;
+    private boolean displayNextStep = false;
 
     public AlgoObserver(Canvas canvas, double multiplier, double offsetX, double offsetY) {
         this.canvas = canvas;
@@ -145,8 +147,15 @@ public class AlgoObserver implements Observer {
         Algorithm algo = (Algorithm) o;
 
         int steps = algo.getSteps();
-        if(steps % 1000 == 0) {
+        if(displayNextStep || steps % 1000 == 0) {
            display(algo);
+           displayNextStep = false;
+        }
+
+        if(!algo.hasNext())
+        {
+            canvas.getScene().lookup("#algoDropdown").setDisable(false);
+            canvas.getScene().lookup("#datasetDropdown").setDisable(false);
         }
     }
 
@@ -156,8 +165,12 @@ public class AlgoObserver implements Observer {
         drawAlgorithmInfo(algorithm);
     }
 
-
     public void setShowBestSolution(boolean showBestSolution) {
         this.showBestSolution = showBestSolution;
     }
+
+    public void setDisplayNextStep(boolean displayNextStep) {
+        this.displayNextStep = displayNextStep;
+    }
+
 }
