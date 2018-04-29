@@ -2,6 +2,7 @@ package module.Solutions;
 
 import module.Path;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -61,5 +62,10 @@ public class Solution {
 
     public Set<Path> getPaths() {
         return paths;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(paths);
     }
 }
