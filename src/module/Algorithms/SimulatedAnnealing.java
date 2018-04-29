@@ -96,7 +96,7 @@ public class SimulatedAnnealing extends Algorithm {
     }
 
     private void setNeighbourhoodStrategy() {
-        int rd = random.nextInt(3);
+        int rd = random.nextInt(4);
 
         switch (rd) {
             case 0:
@@ -107,6 +107,9 @@ public class SimulatedAnnealing extends Algorithm {
                 break;
             case 2:
                 currentSolution.setNeighbourStrategy(new StealNeighbour());
+                break;
+            case 3:
+                currentSolution.setNeighbourStrategy(new AddPathNeighbor());
                 break;
             default:
                 break;
