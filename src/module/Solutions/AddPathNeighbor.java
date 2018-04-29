@@ -18,7 +18,6 @@ public class AddPathNeighbor extends AbstractNeighbourhood {
 
     @Override
     protected Map.Entry<Path, Path> neighbourhoodCalculation() {
-        System.out.println("coucou");
         Path target = selected.getKey();
 
         List<Node> nodesStealable = new ArrayList<>(target.getNodes());
