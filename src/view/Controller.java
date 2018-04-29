@@ -116,6 +116,11 @@ public class Controller {
     }
 
     @FXML
+    private void setMaxIterations() {
+        System.out.println("Setting max iterations");
+    }
+
+    @FXML
     private void playButtonClick(ActionEvent event) {
         if(algoThread != null){
             algoDropdown.setDisable(true);
