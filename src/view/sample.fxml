@@ -1,29 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import java.lang.String?>
 <?import javafx.collections.FXCollections?>
+<?import javafx.geometry.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.canvas.*?>
 <?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 
-<?import javafx.scene.control.TextField?>
-<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.Controller">
+<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="940.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="view.Controller">
   <children>
-    <BorderPane fx:id="grid" layoutX="0.0" layoutY="0.0" prefHeight="768.0" prefWidth="1024.0">
+    <BorderPane fx:id="grid" layoutX="0.0" layoutY="0.0" prefHeight="768.0" prefWidth="940.0">
       <center>
-        <Canvas fx:id="mapCanvas" height="600.0" width="600.0" />
+        <Canvas fx:id="mapCanvas" height="740.0" width="740.0" BorderPane.alignment="TOP_LEFT">
+          <BorderPane.margin>
+            <Insets />
+          </BorderPane.margin>
+        </Canvas>
       </center>
+      <left>
+        <VBox prefHeight="739.0" prefWidth="200.0" styleClass="detailedSettings">
+          <children>
+            <ComboBox fx:id="algoDropdown" onAction="#reset" prefWidth="200.0" value="Please select an algorithm">
+              <VBox.margin>
+                <Insets top="5.0" fx:id="x1" />
+              </VBox.margin>
+            </ComboBox>
+            <ComboBox fx:id="datasetDropdown" onAction="#reset" prefWidth="200.0" value="Please select a data set" VBox.margin="$x1" />
+            <VBox fx:id="detailedSettings" prefHeight="200.0" prefWidth="100.0">
+              <children>
+                <TextField fx:id="maxIterationsInput" prefHeight="25.0" prefWidth="157.0" text="100000">
+                  <VBox.margin>
+                    <Insets top="10.0" />
+                  </VBox.margin>
+                </TextField>
+              </children>
+            </VBox>
+          </children>
+        </VBox>
+      </left>
       <top>
-        <HBox prefHeight="29.0" prefWidth="1024.0">
+        <HBox prefHeight="29.0" prefWidth="476.0">
           <children>
             <Button fx:id="playButton" mnemonicParsing="false" onAction="#playButtonClick" text="Start">
               <HBox.margin>
-                <Insets right="5.0" />
+                <Insets left="210.0" right="5.0" />
               </HBox.margin>
             </Button>
             <Button fx:id="stepButton" mnemonicParsing="false" onAction="#stepButtonClick" text="Step">
@@ -31,31 +61,16 @@
                 <Insets right="5.0" />
               </HBox.margin>
             </Button>
-            <Button fx:id="stopButton" mnemonicParsing="false" onAction="#stopButtonClick" text="Reset" disable="true">
+            <Button fx:id="stopButton" disable="true" mnemonicParsing="false" onAction="#stopButtonClick" text="Reset">
               <HBox.margin>
                 <Insets right="5.0" />
               </HBox.margin>
             </Button>
-            <ComboBox fx:id="algoDropdown" onAction="#reset" value="Please select an algorithm">
-              <HBox.margin>
-                <Insets right="5.0" />
-              </HBox.margin>
-            </ComboBox>
-            <ComboBox fx:id="datasetDropdown" onAction="#reset" value="Please select a data set">
-              <HBox.margin>
-                <Insets right="5.0" />
-              </HBox.margin>
-            </ComboBox>
             <CheckBox fx:id="showBestSolution" mnemonicParsing="false" onAction="#showBestSolutionClick" prefHeight="25.0" prefWidth="157.0" selected="true" text="Show best solution">
               <HBox.margin>
                 <Insets right="5.0" />
               </HBox.margin>
             </CheckBox>
-            <TextField fx:id="maxIterationsInput" prefHeight="25.0" prefWidth="157.0" text="100000">
-              <HBox.margin>
-                <Insets right="5.0" />
-              </HBox.margin>
-            </TextField>
           </children>
         </HBox>
       </top>

@@ -9,13 +9,14 @@ import module.utils.Helpers;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class SimulatedGenetic extends Algorithm {
+public class GeneticAlgorithm extends Algorithm {
 
     private final int maxStep;
     private final static int MAX_CAPACITY = 100;
     private final Random random;
+    private List<Solution> currentSolutions = new ArrayList<>();
 
-    public SimulatedGenetic(int maxStep, List<Node> nodes) {
+    public GeneticAlgorithm(int maxStep, List<Node> nodes) {
         this.steps = 0;
         this.maxStep = maxStep;
         this.random = Helpers.random;
@@ -52,17 +53,19 @@ public class SimulatedGenetic extends Algorithm {
         if (hasNext()) {
             steps++;
 
-            List<Solution> currentSolutions = new ArrayList<>();
-
-            currentSolution.setNeighbourStrategy(new SwapNeighbor());
             Solution tmpSolution;
             int failSafe = 0;
-            while(currentSolutions.size() < 100 && failSafe < 100)
+            Set<Double> fitnesses = new HashSet<>();
+            currentSolutions = new ArrayList<>();
+
+            currentSolution.setNeighbourStrategy(new SwapNeighbor());
+            while(currentSolutions.size() < 50 && failSafe < 100)
             {
                 tmpSolution = currentSolution.getNextValidSolutions().iterator().next();
-                if(currentSolutions.add(tmpSolution))
+                if(!currentSolutions.contains(tmpSolution) && !fitnesses.contains(tmpSolution.getFitness()))
                 {
                     currentSolutions.add(tmpSolution);
+                    fitnesses.add(tmpSolution.getFitness());
                     failSafe = 0;
                 }
                 else
@@ -70,6 +73,10 @@ public class SimulatedGenetic extends Algorithm {
                     failSafe++;
                 }
             }
+
+            //System.out.println(currentSolutions.size());
+
+            currentSolutions.sort(Comparator.comparing(Solution::getFitness).reversed());
 
 
             /*currentSolution.setNeighbourStrategy(new SwapSameNeighbourhood());
@@ -77,41 +84,41 @@ public class SimulatedGenetic extends Algorithm {
             currentSolution.setNeighbourStrategy(new StealNeighbour());
             solutions.addAll(currentSolution.getNextValidSolutions());*/
             //System.out.println("Solutions: " + currentSolutions.size());
-            final double highestFitness = (currentSolutions.stream().max(Comparator.comparing( Solution::getFitness )).get().getFitness()*1.5);
+            //final double highestFitness = (currentSolutions.stream().max(Comparator.comparing( Solution::getFitness )).get().getFitness()*1.5);
+
+            final double highestFitness = currentSolutions.get(0).getFitness();
             double rouletteSize = currentSolutions.stream().mapToDouble(s -> (highestFitness - s.getFitness())).sum();
 
             //System.out.println(rouletteSize);
 
 
-            List<Solution> bestSolutions = new ArrayList<>();
+            Set<Solution> firstBestSolutions = new HashSet<>();
 
-            failSafe = 0;
-            while(bestSolutions.size() < 10 && failSafe < 100)
+
+            //long start = System.nanoTime();
+            while(firstBestSolutions.size() < 10)
             {
                 double randomPick = random.nextInt((int)rouletteSize);
                 double fitnessSum = 0;
-                tmpSolution = null;
                 for(Solution s : currentSolutions)
                 {
                     if(randomPick >= fitnessSum && randomPick <= fitnessSum+(highestFitness-s.getFitness()))
                     {
-                        tmpSolution = s;
+                        if(!firstBestSolutions.contains(s))
+                        {
+                            firstBestSolutions.add(s);
+                        }
                         break;
                     }
                     fitnessSum+=highestFitness-s.getFitness();
                 }
-                if(!bestSolutions.contains(tmpSolution))
-                {
-                    bestSolutions.add(tmpSolution);
-                    failSafe = 0;
-                }
-                else
-                {
-                    //System.out.println("damn");
-                    failSafe++;
-                }
             }
 
+            //System.out.println("115: " + (System.nanoTime()-start));
+            //start = System.nanoTime();
+
+
+            List<Solution> bestSolutions = firstBestSolutions.stream().collect(Collectors.toList());
             //System.out.println("best solutions: " + bestSolutions.size());
             for(int solOneIndex=0; solOneIndex<bestSolutions.size(); solOneIndex++)
             {
@@ -123,11 +130,32 @@ public class SimulatedGenetic extends Algorithm {
 
                 if(bestSolutions.get(solOneIndex) == null)
                 {
-                    System.out.println("soleOneIndex: " + solOneIndex);
+                    //System.out.println("soleOneIndex: " + solOneIndex);
                 }
                 SolutionSwapper sw = new SolutionSwapper(bestSolutions.get(solOneIndex), bestSolutions.get(solTwoIndex));
                 sw.swap();
             }
+
+            //System.out.println("138: " + (System.nanoTime()-start));
+            //start = System.nanoTime();
+
+            ListIterator<Solution> bestItt = bestSolutions.listIterator();
+            List<Solution> newBestSolutions = new ArrayList<>();
+            for(Solution s : bestSolutions)
+            {
+                if(random.nextInt(100) < 4)
+                {
+                    newBestSolutions.add(s);
+                }
+                else
+                {
+                    s.setNeighbourStrategy(new SwapSameNeighbourhood());
+                    newBestSolutions.add(s.getNextValidSolutions().iterator().next());
+                }
+            }
+            bestSolutions = newBestSolutions;
+            //System.out.println("156: " + (System.nanoTime()-start));
+            //start = System.nanoTime();
 
             Solution tmpBestSolution = bestSolutions.get(0);
             //System.out.println("bestSolution : " + bestSolution.getFitness());
@@ -139,10 +167,19 @@ public class SimulatedGenetic extends Algorithm {
                     tmpBestSolution = s;
                 }
             }
+
+            //System.out.println("170: " + (System.nanoTime()-start));
+            //start = System.nanoTime();
+
+            //currentSolution = currentSolution.getFitness() < tmpBestSolution.getFitness() ? currentSolution : tmpBestSolution;
             currentSolution = tmpBestSolution;
-            bestSolution = bestSolution.getFitness() < tmpBestSolution.getFitness() ? bestSolution : tmpBestSolution;
 
 
+
+
+            bestSolution = bestSolution.getFitness() < currentSolution.getFitness() ? bestSolution : currentSolution;
+
+            currentSolution = bestSolution;
 
 
             /*if(currentSolution.getFitness() < bestSolution.getFitness())

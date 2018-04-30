@@ -1,7 +1,9 @@
 package module.Algorithms;
 
+import module.Node;
 import module.Solutions.Solution;
 
+import java.util.List;
 import java.util.Observable;
 
 public abstract class Algorithm extends Observable implements AlgorithmStrategy {

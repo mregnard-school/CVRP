@@ -17,9 +17,9 @@ public class Main extends Application {
         controller = loader.getController();
 
         primaryStage.setTitle("Annealing Algo");
-        primaryStage.setScene(new Scene(root, 1024, 768));
+        primaryStage.setScene(new Scene(root, 940, 768));
 
-        String css = this.getClass().getResource("../view/button.css").toExternalForm();
+        String css = this.getClass().getResource("../view/style.css").toExternalForm();
         primaryStage.getScene().getStylesheets().add(css);
 
         primaryStage.show();

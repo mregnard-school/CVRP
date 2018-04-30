@@ -5,19 +5,20 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import module.Algorithms.Algorithm;
 import module.Algorithms.SimulatedAnnealing;
-import module.Algorithms.SimulatedGenetic;
+import module.Algorithms.GeneticAlgorithm;
 import module.Node;
 import module.NodeReader;
 import module.exceptions.ComparingException;
+import module.utils.Helpers;
 import view.Objects.AlgoObserver;
 import view.Objects.AlgoThreadObj;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Map;
 
 public class Controller {
     private AlgoThreadObj algoThreadObj;
@@ -39,13 +40,15 @@ public class Controller {
     @FXML
     private Button stopButton;
     @FXML
+    private VBox detailedSettings;
+    @FXML
     private TextField maxIterationsInput;
 
     public void initialize() {
         algoDropdown.getItems().addAll(
-                "Simulated Genetic",
-                "Simulated Annealing"
+                Helpers.algorithms.keySet()
         );
+
 
         datasetDropdown.getItems().addAll(
                 "data01.txt",
@@ -74,10 +77,10 @@ public class Controller {
     }
 
     private void initializeAlgorithm(Algorithm algorithm, List<Node> nodes) {
-        mapCanvas.prefHeight(750);
-        mapCanvas.prefWidth(750);
-        mapCanvas.setWidth(750);
-        mapCanvas.setHeight(750);
+        //mapCanvas.prefHeight(750);
+        ///mapCanvas.prefWidth(750);
+        ///mapCanvas.setWidth(750);
+        //mapCanvas.setHeight(750);
 
         try{
             int maxWidth = nodes.stream()
@@ -132,13 +135,27 @@ public class Controller {
 
         if(algoDropdown.getValue().equals("Simulated Annealing"))
         {
-            initializeAlgorithm(new SimulatedAnnealing(100000, nodes), nodes);
+            initializeAlgorithm(new SimulatedAnnealing(1000000, nodes), nodes);
 
         }
-        else if(algoDropdown.getValue().equals("Simulated Genetic"))
+        else if(algoDropdown.getValue().equals("Genetic Algorithm"))
         {
-            initializeAlgorithm(new SimulatedGenetic(100000, nodes), nodes);
+            initializeAlgorithm(new GeneticAlgorithm(10000000, nodes), nodes);
         }
+
+        detailedSettings.getChildren().clear();
+
+        for(Map.Entry<String,String> setting : Helpers.algoSettings.get(algoDropdown.getValue()).entrySet())
+        {
+            VBox vbox = new VBox();
+                Label label = new Label(setting.getKey());
+                vbox.getChildren().add(label);
+                TextField value = new TextField(setting.getValue());
+                vbox.getChildren().add(value);
+            detailedSettings.getChildren().add(vbox);
+        }
+
+
         started = false;
     }
 
