@@ -1,6 +1,7 @@
 package module.Algorithms;
 
 import module.Node;
+import module.Path;
 import module.Solutions.Solution;
 import module.Solutions.StealNeighbour;
 import module.Solutions.SwapNeighbor;
@@ -16,7 +17,8 @@ public class GeneticAlgorithm extends Algorithm {
 
     private final int maxStep;
     private final Random random;
-    private List<Solution> currentPopulation = new ArrayList<>();
+    private final int populationSize;
+    private List<Solution> currentPopulation;
     private double bestSelectionRate;
     private double crossoverRate;
     private double mutationRate;
@@ -28,7 +30,20 @@ public class GeneticAlgorithm extends Algorithm {
         bestSelectionRate = 0.1;
         crossoverRate = 0.5;
         mutationRate = 0.05;
+        populationSize = 30;
+        currentPopulation = new ArrayList<>();
         initialize(nodes);
+    }
+
+    @Override
+    public void initialize(List<Node> nodes) {
+        super.initialize(nodes);
+        while(currentPopulation.size() < populationSize) {
+            Set<Path> paths = new HashSet<>(currentSolution.getPaths());
+            Solution solution = new Solution(paths, new SwapNeighbor());
+            currentPopulation.add(solution);
+        }
+        // TODO: 30/04/2018 RANDOM SOLUTIONS AT INITIALIZE
     }
 
     public void next() {
