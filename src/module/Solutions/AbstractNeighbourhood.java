@@ -15,14 +15,22 @@ public abstract class AbstractNeighbourhood implements NeighbourStrategy {
     protected Map.Entry<Path, Path> modified;
     protected Set<Path> copy;
     protected Set<Solution> solutions;
+    private int infiniteLoop = 0;
 
     @Override
     public Set<Solution> getNeighbourhood(Solution solution) {
         paths = solution.getPaths();
         do {
            calculateNextSolutions();
-        } while (notValid());
+           infiniteLoop++;
+        } while (notValid() && infiniteLoop < 1000);
 
+        if(infiniteLoop == 1000){
+            solutions = new HashSet<>();
+            Set<Path> paths = new HashSet<>(solution.getPaths());
+            Solution newSolution = new Solution(paths, this);
+            solutions.add(newSolution);
+        }
         return solutions;
     }
 

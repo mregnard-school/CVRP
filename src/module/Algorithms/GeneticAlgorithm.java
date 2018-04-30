@@ -6,7 +6,6 @@ import module.Solutions.Solution;
 import module.Solutions.StealNeighbour;
 import module.Solutions.SwapNeighbor;
 import module.Solutions.SwapSameNeighbourhood;
-import module.exceptions.SolutionSwapper;
 import module.utils.Helpers;
 
 import java.util.*;
@@ -19,32 +18,74 @@ public class GeneticAlgorithm extends Algorithm {
     private final Random random;
     private final int populationSize;
     private List<Solution> currentPopulation;
+    private List<Node> nodes;
     private double bestSelectionRate;
     private double crossoverRate;
     private double mutationRate;
+    private double randomRate;
 
     public GeneticAlgorithm(int maxStep, List<Node> nodes) {
         super(maxStep);
+        this.nodes = nodes;
         this.steps = 0;
         this.maxStep = maxStep;
         this.random = Helpers.random;
-        bestSelectionRate = 0.1;
-        crossoverRate = 0.5;
-        mutationRate = 0.05;
-        populationSize = 30;
+        bestSelectionRate = 0.2;
+        crossoverRate = 0.8;
+        randomRate = 1 - crossoverRate - bestSelectionRate;
+        mutationRate = 0.5;
+        populationSize = 150;
         currentPopulation = new ArrayList<>();
         initialize(nodes);
     }
 
     @Override
     public void initialize(List<Node> nodes) {
-        super.initialize(nodes);
-        while(currentPopulation.size() < populationSize) {
-            Set<Path> paths = new HashSet<>(currentSolution.getPaths());
-            Solution solution = new Solution(paths, new SwapNeighbor());
-            currentPopulation.add(solution);
+        Set<Solution> solutions = new HashSet<>();
+        while (solutions.size() < populationSize) {
+            solutions.add(createRandomSolution());
         }
-        // TODO: 30/04/2018 RANDOM SOLUTIONS AT INITIALIZE
+
+        currentPopulation = new ArrayList<>(solutions);
+        currentSolution = currentPopulation.get(0);
+        bestSolution = currentSolution;
+        updateBestSolution();
+    }
+
+    public Solution createRandomSolution() {
+        List<Node> copy = new ArrayList<>(nodes);
+        Node warehouse = nodes.get(0);
+        copy.remove(warehouse);
+        Collections.shuffle(copy, random);
+        copy.add(0, warehouse);
+
+        Set<Path> paths = new HashSet<>();
+        Path currentPath = new Path();
+        currentPath.addNode(warehouse);
+
+        Iterator<Node> iterator = copy.iterator();
+        iterator.next(); //warehouse
+
+        while (iterator.hasNext()) {
+            Node node = iterator.next();
+            if (!currentPath.canAddNode(node)) {
+                paths.add(currentPath);
+                currentPath = new Path();
+                currentPath.addNode(warehouse);
+            }
+            currentPath.addNode(node);
+        }
+
+        paths.add(currentPath);
+
+        paths.parallelStream().forEach(path -> {
+            path.addNode(warehouse);
+            path.recompute();
+        });
+
+
+        return new Solution(paths, new SwapNeighbor());
+
     }
 
     public void next() {
@@ -53,32 +94,35 @@ public class GeneticAlgorithm extends Algorithm {
 
             List<Solution> newPopulation = new ArrayList<>(selection());
             newPopulation = mutations(newPopulation);
-
             currentPopulation = newPopulation;
-
             updateBestSolution();
+
+            setChanged();
+            notifyObservers();
         }
     }
 
     public List<Solution> selection() {
-        List<Solution> bests = selectBestPercentage(bestSelectionRate);
-        List<Solution> selectedForCrossover = selectForCrossover(crossoverRate);
+        List<Solution> bests = selectBestPercentage();
+        List<Solution> selectedForCrossover = selectForCrossover();
+        List<Solution> randoms = selectRandom();
 
         List<Solution> selected = new ArrayList<>(bests);
         selected.addAll(selectedForCrossover);
+        selected.addAll(randoms);
 
         return selected;
     }
 
-    private List<Solution> selectBestPercentage(double percentage) {
-        int nb = (int) percentage * currentPopulation.size();
+    private List<Solution> selectBestPercentage() {
+        int nb = (int) (bestSelectionRate * currentPopulation.size());
         currentPopulation.sort(Comparator.comparing(Solution::getFitness, Comparator.reverseOrder()));
         return currentPopulation.stream().limit(nb).collect(Collectors.toList());
     }
 
-    private List<Solution> selectForCrossover(double crossoverPercentage) {
+    private List<Solution> selectForCrossover() {
         List<Solution> offsprings = new ArrayList<>();
-        int nb = (int) crossoverPercentage * currentPopulation.size();
+        int nb = (int) (crossoverRate * currentPopulation.size());
         while (offsprings.size() < nb) {
             Solution firstParent = roulette();
             Solution secondParent = roulette();
@@ -88,6 +132,16 @@ public class GeneticAlgorithm extends Algorithm {
         }
 
         return offsprings;
+    }
+
+    private List<Solution> selectRandom() {
+        List<Solution> randoms = new ArrayList<>();
+        int nb = (int) (randomRate * currentPopulation.size());
+        while (randoms.size() < nb) {
+            randoms.add(createRandomSolution());
+        }
+
+        return randoms;
     }
 
     private Solution roulette() {
@@ -131,22 +185,26 @@ public class GeneticAlgorithm extends Algorithm {
     }
 
     private List<Solution> mutations(List<Solution> population) {
+
         population = population.stream().flatMap(solution -> {
             double rd = random.nextDouble();
             if (rd < mutationRate) {
-                setNeighborStrategy(solution);
-                Solution next = solution.getNextValidSolutions()
-                        .stream()
-                        .findFirst()
-                        .orElseThrow(NoSuchElementException::new);
-
-                return Stream.of(next);
+                Solution mutated = mutate(solution);
+                return Stream.of(mutated);
             }
-
             return Stream.of(solution);
         }).collect(Collectors.toList());
 
         return population;
+    }
+
+    private Solution mutate(Solution solution) {
+        setNeighborStrategy(solution);
+        Solution solution1 = solution.getNextValidSolutions()
+                .stream()
+                .findFirst()
+                .orElse(null);
+        return solution1;
     }
 
     private void setNeighborStrategy(Solution solution) {
@@ -165,6 +223,8 @@ public class GeneticAlgorithm extends Algorithm {
             default:
                 break;
         }
+
+        // TODO: 30/04/2018 Put in Algorithm to avoid copy paster code
     }
 
     private void updateBestSolution() {
@@ -174,132 +234,6 @@ public class GeneticAlgorithm extends Algorithm {
                 currentSolution = bestSolution;
             }
         });
-    }
-
-    public void next2() {
-        if (hasNext()) {
-            steps++;
-
-            Solution tmpSolution;
-            int failSafe = 0;
-            Set<Double> fitnesses = new HashSet<>();
-            currentPopulation = new ArrayList<>();
-
-            currentSolution.setNeighbourStrategy(new SwapNeighbor());
-            while (currentPopulation.size() < 50 && failSafe < 100) {
-                tmpSolution = currentSolution.getNextValidSolutions().iterator().next();
-                if (!currentPopulation.contains(tmpSolution) && !fitnesses.contains(tmpSolution.getFitness())) {
-                    currentPopulation.add(tmpSolution);
-                    fitnesses.add(tmpSolution.getFitness());
-                    failSafe = 0;
-                } else {
-                    failSafe++;
-                }
-            }
-
-            //System.out.println(currentPopulation.size());
-
-            currentPopulation.sort(Comparator.comparing(Solution::getFitness).reversed());
-
-
-            /*currentSolution.setNeighbourStrategy(new SwapSameNeighbourhood());
-            solutions.addAll(currentSolution.getNextValidSolutions());
-            currentSolution.setNeighbourStrategy(new StealNeighbour());
-            solutions.addAll(currentSolution.getNextValidSolutions());*/
-            //System.out.println("Solutions: " + currentPopulation.size());
-            //final double highestFitness = (currentPopulation.stream().max(Comparator.comparing( Solution::getFitness )).get().getFitness()*1.5);
-
-            final double highestFitness = currentPopulation.get(0).getFitness();
-            double rouletteSize = currentPopulation.stream().mapToDouble(s -> (highestFitness - s.getFitness())).sum();
-
-            //System.out.println(rouletteSize);
-
-
-            Set<Solution> firstBestSolutions = new HashSet<>();
-
-
-            //long start = System.nanoTime();
-            while (firstBestSolutions.size() < 10) {
-                double randomPick = random.nextInt((int) rouletteSize);
-                double fitnessSum = 0;
-                for (Solution s : currentPopulation) {
-                    if (randomPick >= fitnessSum && randomPick <= fitnessSum + (highestFitness - s.getFitness())) {
-                        if (!firstBestSolutions.contains(s)) {
-                            firstBestSolutions.add(s);
-                        }
-                        break;
-                    }
-                    fitnessSum += highestFitness - s.getFitness();
-                }
-            }
-
-            //System.out.println("115: " + (System.nanoTime()-start));
-            //start = System.nanoTime();
-
-
-            List<Solution> bestSolutions = firstBestSolutions.stream().collect(Collectors.toList());
-            //System.out.println("best solutions: " + bestSolutions.size());
-            for (int solOneIndex = 0; solOneIndex < bestSolutions.size(); solOneIndex++) {
-                int solTwoIndex;
-                do {
-                    solTwoIndex = random.nextInt(bestSolutions.size());
-                    //System.out.println(solOneIndex  + "!=" + solTwoIndex);
-                } while (solOneIndex == solTwoIndex);
-
-                if (bestSolutions.get(solOneIndex) == null) {
-                    //System.out.println("soleOneIndex: " + solOneIndex);
-                }
-                SolutionSwapper sw = new SolutionSwapper(bestSolutions.get(solOneIndex), bestSolutions.get(solTwoIndex));
-                sw.swap();
-            }
-
-            //System.out.println("138: " + (System.nanoTime()-start));
-            //start = System.nanoTime();
-
-            ListIterator<Solution> bestItt = bestSolutions.listIterator();
-            List<Solution> newBestSolutions = new ArrayList<>();
-            for (Solution s : bestSolutions) {
-                if (random.nextInt(100) < 4) {
-                    newBestSolutions.add(s);
-                } else {
-                    s.setNeighbourStrategy(new SwapSameNeighbourhood());
-                    newBestSolutions.add(s.getNextValidSolutions().iterator().next());
-                }
-            }
-            bestSolutions = newBestSolutions;
-            //System.out.println("156: " + (System.nanoTime()-start));
-            //start = System.nanoTime();
-
-            Solution tmpBestSolution = bestSolutions.get(0);
-            //System.out.println("bestSolution : " + bestSolution.getFitness());
-            for (Solution s : bestSolutions) {
-                //System.out.println("\t" + s.getFitness());
-                if (s.getFitness() < tmpBestSolution.getFitness()) {
-                    tmpBestSolution = s;
-                }
-            }
-
-            //System.out.println("170: " + (System.nanoTime()-start));
-            //start = System.nanoTime();
-
-            //currentSolution = currentSolution.getFitness() < tmpBestSolution.getFitness() ? currentSolution : tmpBestSolution;
-            currentSolution = tmpBestSolution;
-
-
-            bestSolution = bestSolution.getFitness() < currentSolution.getFitness() ? bestSolution : currentSolution;
-
-            currentSolution = bestSolution;
-
-
-            /*if(currentSolution.getFitness() < bestSolution.getFitness())
-            {
-                bestSolution = currentSolution;
-            }*/
-
-
-            setChanged();
-            notifyObservers();
-        }
     }
 
     @Override
