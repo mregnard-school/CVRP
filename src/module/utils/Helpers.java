@@ -28,6 +28,10 @@ public class Helpers {
                 {
                     put("Max iterations", "10000");
                     put("Max capacity for each truck", "100");
+                    put("Best Selection Rate", "0.2");
+                    put("Crossover Rate", "0.7");
+                    put("Mutation Rate", "0.8");
+                    put("Population Size", "10");
                 }
             });
             put("Simulated Annealing", new LinkedHashMap<String,String>() {
@@ -48,6 +52,10 @@ public class Helpers {
         if(algo instanceof  GeneticAlgorithm)
         {
             info.put("Step: ", Integer.toString(algo.getSteps()));
+            info.put("Best Selection Rate: ", Double.toString(((GeneticAlgorithm)algo).getBestSelectionRate()));
+            info.put("Crossover Rate: ", Double.toString(((GeneticAlgorithm)algo).getCrossoverRate()));
+            info.put("Mutation Rate: ", Double.toString(((GeneticAlgorithm)algo).getMutationRate()));
+            info.put("Population Size: ", Double.toString(((GeneticAlgorithm)algo).getPopulationSize()));
         }
         else if(algo instanceof  SimulatedAnnealing)
         {
@@ -73,7 +81,22 @@ public class Helpers {
         }
         else if(algo instanceof  GeneticAlgorithm)
         {
-
+            if(key.equals("Best Selection Rate"))
+            {
+                ((GeneticAlgorithm)algo).setBestSelectionRate(Double.parseDouble(value));
+            }
+            else if(key.equals("Crossover Rate"))
+            {
+                ((GeneticAlgorithm)algo).setCrossoverRate(Double.parseDouble(value));
+            }
+            else if(key.equals("Mutation Rate"))
+            {
+                ((GeneticAlgorithm)algo).setMutationRate(Double.parseDouble(value));
+            }
+            else if(key.equals("Population Size"))
+            {
+                ((GeneticAlgorithm)algo).setPopulationSize((int)Double.parseDouble(value));
+            }
         }
         else if(algo instanceof SimulatedAnnealing)
         {
@@ -86,5 +109,6 @@ public class Helpers {
                 ((SimulatedAnnealing)algo).setCurrentTemperature(Double.parseDouble(value));
             }
         }
+        algo.forceGFXUpdate();
     }
 }

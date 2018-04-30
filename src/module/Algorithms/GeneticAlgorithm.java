@@ -13,10 +13,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class GeneticAlgorithm extends Algorithm {
-
-    private final int maxStep;
     private final Random random;
-    private final int populationSize;
+    private int populationSize;
     private List<Solution> currentPopulation;
     private List<Node> nodes;
     private double bestSelectionRate;
@@ -28,7 +26,6 @@ public class GeneticAlgorithm extends Algorithm {
         super(maxStep);
         this.nodes = nodes;
         this.steps = 0;
-        this.maxStep = maxStep;
         this.random = Helpers.random;
         bestSelectionRate = 0.2;
         crossoverRate = 0.7;
@@ -287,5 +284,40 @@ public class GeneticAlgorithm extends Algorithm {
     @Override
     public boolean hasNext() {
         return steps < maxStep;
+    }
+
+    public int getPopulationSize() {
+        return populationSize;
+    }
+
+    public void setPopulationSize(int populationSize)
+    {
+        this.populationSize = populationSize;
+    }
+
+    public double getBestSelectionRate() {
+        return bestSelectionRate;
+    }
+
+    public void setBestSelectionRate(double bestSelectionRate) {
+        this.bestSelectionRate = bestSelectionRate;
+        randomRate = 1 - crossoverRate - bestSelectionRate;
+    }
+
+    public double getCrossoverRate() {
+        return crossoverRate;
+    }
+
+    public void setCrossoverRate(double crossoverRate) {
+        this.crossoverRate = crossoverRate;
+        randomRate = 1 - crossoverRate - bestSelectionRate;
+    }
+
+    public double getMutationRate() {
+        return mutationRate;
+    }
+
+    public void setMutationRate(double mutationRate) {
+        this.mutationRate = mutationRate;
     }
 }

@@ -80,4 +80,10 @@ public abstract class Algorithm extends Observable implements AlgorithmStrategy 
     public void setMAX_CAPACITY(int MAX_CAPACITY) {
         this.MAX_CAPACITY = MAX_CAPACITY;
     }
+
+    public void forceGFXUpdate()
+    {
+        setChanged();
+        notifyObservers();
+    }
 }
