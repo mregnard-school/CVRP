@@ -24,6 +24,7 @@ public class GeneticAlgorithm extends Algorithm {
     private double mutationRate;
 
     public GeneticAlgorithm(int maxStep, List<Node> nodes) {
+        super(maxStep);
         this.steps = 0;
         this.maxStep = maxStep;
         this.random = Helpers.random;
