@@ -42,6 +42,17 @@ public class Helpers {
 
     public final static void makeChangeToAlgorithm(Algorithm algo, String key, String value)
     {
+        if(key.equals("Max iterations"))
+        {
+            algo.setMaxStep(Integer.parseInt(value));
+        }
+        else if(algo instanceof  GeneticAlgorithm)
+        {
 
+        }
+        else if(algo instanceof SimulatedAnnealing)
+        {
+
+        }
     }
 }

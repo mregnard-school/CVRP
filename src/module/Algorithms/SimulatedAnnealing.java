@@ -8,8 +8,6 @@ import module.utils.Helpers;
 import java.util.*;
 
 public class SimulatedAnnealing extends Algorithm {
-
-    private final int maxStep;
     private final Random random;
     private double currentTemperature;
     private final double mu;
@@ -18,9 +16,9 @@ public class SimulatedAnnealing extends Algorithm {
     private final static int MAX_CAPACITY = 100;
 
     public SimulatedAnnealing(int maxStep, List<Node> paths) {
+        super(maxStep);
         initializeAPathByNode(paths);
         steps = 0;
-        this.maxStep = maxStep;
         random = Helpers.random;
         mu = 0.9995;
         initializeTemperature();
@@ -111,11 +109,6 @@ public class SimulatedAnnealing extends Algorithm {
             default:
                 break;
         }
-    }
-
-    @Override
-    public boolean hasNext() {
-        return steps < maxStep;
     }
 
     private double temparature() {

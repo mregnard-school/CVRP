@@ -1,5 +1,9 @@
 package view;
 
+import javafx.beans.Observable;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
@@ -15,7 +19,9 @@ import module.exceptions.ComparingException;
 import module.utils.Helpers;
 import view.Objects.AlgoObserver;
 import view.Objects.AlgoThreadObj;
+import view.Objects.NumberTextField;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +49,8 @@ public class Controller {
     private VBox detailedSettings;
     @FXML
     private TextField maxIterationsInput;
+
+    private List<VBox> settingsFields;
 
     public void initialize() {
         algoDropdown.getItems().addAll(
@@ -145,24 +153,35 @@ public class Controller {
 
         detailedSettings.getChildren().clear();
 
+        settingsFields = new ArrayList<>();
+        ObservableList<NumberTextField> oList = FXCollections.observableArrayList(tf -> new Observable[]{tf.textProperty()});
+        oList.addListener((ListChangeListener.Change<? extends NumberTextField> c) -> {
+            while (c.next()) {
+                if (c.wasUpdated()) {
+                    for (int i = c.getFrom(); i < c.getTo(); ++i) {
+                        Helpers.makeChangeToAlgorithm(algoThreadObj.getAlgorithm(), c.getList().get(i).label, c.getList().get(i).getText());
+                        //System.out.println("Updated index: " + i + ", new value: " + c.getList().get(i).getText());
+                    }
+                }
+            }
+        });
         for(Map.Entry<String,String> setting : Helpers.algoSettings.get(algoDropdown.getValue()).entrySet())
         {
             VBox vbox = new VBox();
                 Label label = new Label(setting.getKey());
                 vbox.getChildren().add(label);
-                TextField value = new TextField(setting.getValue());
+                NumberTextField value = new NumberTextField(setting.getValue());
+                    value.label = setting.getKey();
+                    oList.add(value);
                 vbox.getChildren().add(value);
             detailedSettings.getChildren().add(vbox);
+            settingsFields.add(vbox);
         }
 
 
         started = false;
     }
 
-    @FXML
-    private void setMaxIterations() {
-        System.out.println("Setting max iterations");
-    }
 
     @FXML
     private void playButtonClick(ActionEvent event) {

@@ -159,7 +159,9 @@ public class AlgoObserver implements Observer {
         Algorithm algo = (Algorithm) o;
 
         int steps = algo.getSteps();
-        if(displayNextStep || steps % 1000 == 0) {
+        int a = (algo.getMaxStep()/500);
+        a = (a == 0 ? 1 : a);
+        if(displayNextStep || steps % a == 0) {
            display(algo);
            displayNextStep = false;
         }
