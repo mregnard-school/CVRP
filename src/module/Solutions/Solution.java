@@ -68,4 +68,17 @@ public class Solution {
     public int hashCode() {
         return Objects.hashCode(paths);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if( obj == null) {
+            return false;
+        }
+        if (obj instanceof Solution) {
+            Solution other = (Solution) obj;
+            return this.paths.equals(other.paths);
+        }
+
+        return false;
+    }
 }

@@ -1,10 +1,14 @@
 package module.Algorithms;
 
 import module.Node;
+import module.Path;
 import module.Solutions.Solution;
+import module.Solutions.SwapNeighbor;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Observable;
+import java.util.Set;
 
 public abstract class Algorithm extends Observable implements AlgorithmStrategy {
     protected Solution bestSolution;
@@ -33,6 +37,26 @@ public abstract class Algorithm extends Observable implements AlgorithmStrategy 
 
     public int getSteps() {
         return steps;
+    }
+
+
+    @Override
+    public void initialize(List<Node> nodes) {
+        Set<Path> paths = new HashSet<>();
+        Node warehouse = nodes.get(0);
+        nodes.stream().skip(1).forEach(node -> {
+            Path path = new Path();
+            path.addNode(warehouse);
+            path.addNode(node);
+            paths.add(path);
+        });
+
+        paths.forEach(path -> {
+            path.addNode(warehouse);
+            path.recompute();
+        });
+        currentSolution = new Solution(paths, new SwapNeighbor());
+        bestSolution = currentSolution;
     }
 
     public void setMaxStep(int maxStep)
