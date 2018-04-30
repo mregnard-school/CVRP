@@ -35,7 +35,7 @@ public class Helpers {
                     put("Max iterations", "100000");
                     put("Max capacity for each truck", "100");
                     put("Initial temperature", "100");
-                    put("mu", "0.9995");
+                    put("mu", "0.9999");
                 }
             });
         }
@@ -86,5 +86,6 @@ public class Helpers {
                 ((SimulatedAnnealing)algo).setCurrentTemperature(Double.parseDouble(value));
             }
         }
+        algo.forceGFXpdate();
     }
 }

@@ -16,7 +16,7 @@ public class Main extends Application {
         Parent root = loader.load();
         controller = loader.getController();
 
-        primaryStage.setTitle("Annealing Algo");
+        primaryStage.setTitle("Capacitated Vehicle Routing Problem");
         primaryStage.setScene(new Scene(root, 940, 768));
 
         String css = this.getClass().getResource("../view/style.css").toExternalForm();

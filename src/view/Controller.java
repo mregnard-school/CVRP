@@ -180,7 +180,8 @@ public class Controller {
             Helpers.makeChangeToAlgorithm(algoThreadObj.getAlgorithm(), setting.getKey(), setting.getValue());
         }
 
-
+        stepButton.setDisable(false);
+        playButton.setText("Play");
         started = false;
     }
 
