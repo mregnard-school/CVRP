@@ -31,10 +31,10 @@ public class GeneticAlgorithm extends Algorithm {
         this.maxStep = maxStep;
         this.random = Helpers.random;
         bestSelectionRate = 0.2;
-        crossoverRate = 0.8;
+        crossoverRate = 0.7;
         randomRate = 1 - crossoverRate - bestSelectionRate;
-        mutationRate = 0.5;
-        populationSize = 150;
+        mutationRate = 0.8;
+        populationSize = 10;
         currentPopulation = new ArrayList<>();
         initialize(nodes);
     }
@@ -83,7 +83,6 @@ public class GeneticAlgorithm extends Algorithm {
             path.recompute();
         });
 
-
         return new Solution(paths, new SwapNeighbor());
 
     }
@@ -93,6 +92,7 @@ public class GeneticAlgorithm extends Algorithm {
             steps++;
 
             List<Solution> newPopulation = new ArrayList<>(selection());
+
             newPopulation = mutations(newPopulation);
             currentPopulation = newPopulation;
             updateBestSolution();
@@ -115,9 +115,13 @@ public class GeneticAlgorithm extends Algorithm {
     }
 
     private List<Solution> selectBestPercentage() {
+        List<Solution> bests = new ArrayList<>();
         int nb = (int) (bestSelectionRate * currentPopulation.size());
         currentPopulation.sort(Comparator.comparing(Solution::getFitness, Comparator.reverseOrder()));
-        return currentPopulation.stream().limit(nb).collect(Collectors.toList());
+        currentPopulation.stream()
+                .limit(nb)
+                .forEach(best -> bests.add(new Solution(best)));
+        return bests;
     }
 
     private List<Solution> selectForCrossover() {
@@ -162,36 +166,80 @@ public class GeneticAlgorithm extends Algorithm {
         for (Double value : cummulatedDesc) {
             Solution solution = iterator.next();
             if (rand <= value) {
-                return solution;
+                return new Solution(solution);
             }
         }
 
-        //Should not be called
-        return null;
+       return iterator.next();
     }
 
     private Solution crossover(Solution firstParent, Solution secondParent) {
         if (firstParent.equals(secondParent)) {
-            firstParent.setNeighbourStrategy(new SwapNeighbor());
-            Solution offspring = firstParent.getNextValidSolutions()
-                    .stream()
-                    .findFirst()
-                    .orElseThrow(NoSuchElementException::new);
-
-            return offspring;
+            return crossoverOnSame(firstParent);
         } else {
-            return firstParent; // TODO: 30/04/2018 Crossover
+            return crossOverWithTwoDifferent(firstParent, secondParent); // TODO: 30/04/2018 Crossover
         }
     }
 
-    private List<Solution> mutations(List<Solution> population) {
+    private Solution crossoverOnSame(Solution firstParent) {
+        firstParent.setNeighbourStrategy(new SwapNeighbor());
+        Solution offspring = firstParent.getNextValidSolutions()
+                .stream()
+                .findFirst()
+                .orElseThrow(NoSuchElementException::new);
 
+        return new Solution(offspring);
+    }
+
+    private Solution crossOverWithTwoDifferent(Solution firstParent, Solution secondParent) {
+        Solution cloned = new Solution(secondParent);
+        Set<Path> paths = new HashSet<>(cloned.getPaths());
+        int firstIndex = random.nextInt(firstParent.getPaths().size());
+
+        Path first = new Path(firstParent.getPaths().stream().skip(firstIndex).findFirst().orElseThrow(NoSuchElementException::new));
+
+        List<Node> copy = new ArrayList<>(first.getNodes());
+
+        for (Node node : copy) {
+            for (int i = 0; i < paths.size(); i++) {
+                Path currentPath = paths.stream().skip(i).findFirst().orElseThrow(NoSuchElementException::new);
+
+                if (currentPath.contains(node)) {
+                    currentPath.getNodes().remove(node);
+                    int mescouilles = 0;
+                    break;
+                }
+            }
+        }
+
+        paths.forEach(Path::recompute);
+        Node warehouse = first.getWarehouse();
+        Path newPath = new Path();
+        newPath.addNode(warehouse);
+        first.getNodes().forEach(newPath::addNode);
+        newPath.addNode(warehouse);
+        paths.add(newPath);
+
+        Set<Path> nonEmpty = new HashSet<>();
+        for (Path path : paths) {
+
+            if (path.getNodes().size() > 0) {
+                nonEmpty.add(path);
+            }
+        }
+
+        Solution offspring = new Solution(nonEmpty, new SwapNeighbor());
+        return offspring;
+    }
+
+    private List<Solution> mutations(List<Solution> population) {
         population = population.stream().flatMap(solution -> {
             double rd = random.nextDouble();
             if (rd < mutationRate) {
                 Solution mutated = mutate(solution);
                 return Stream.of(mutated);
             }
+
             return Stream.of(solution);
         }).collect(Collectors.toList());
 

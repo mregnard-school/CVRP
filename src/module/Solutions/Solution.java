@@ -2,6 +2,7 @@ package module.Solutions;
 
 import module.Path;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -10,13 +11,22 @@ public class Solution {
     private Set<Path> paths;
     private double fitness;
     private boolean valid;
-
+    private double nbNodes;
     NeighbourStrategy neighbourStrategy;
 
     public Solution(Set<Path> paths, NeighbourStrategy neighbourStrategy) {
         this.paths = paths;
         this.neighbourStrategy = neighbourStrategy;
         this.valid = true;
+        this.fitness = computeFitness();
+        nbNodes = paths.stream().mapToInt(path -> path.getNodes().size()).sum();
+    }
+
+    public Solution(Solution solution) {
+        this.neighbourStrategy = solution.getNeighbourStrategy();
+        this.valid = true;
+        this.paths = new HashSet<>();
+        solution.paths.forEach(path -> this.paths.add(new Path(path)));
         this.fitness = computeFitness();
     }
 
@@ -64,6 +74,10 @@ public class Solution {
         return paths;
     }
 
+    public void setPaths(Set<Path> paths) {
+        this.paths = paths;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hashCode(paths);
@@ -81,4 +95,6 @@ public class Solution {
 
         return false;
     }
+
+
 }

@@ -14,6 +14,10 @@ public class Node {
         this.capacity = capacity;
     }
 
+    public Node(Node node) {
+        this.position = new Position(node.getPosition());
+        this.capacity = node.capacity;
+    }
 
     public Position getPosition() {
         return position;
