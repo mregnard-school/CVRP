@@ -176,6 +176,8 @@ public class Controller {
                 vbox.getChildren().add(value);
             detailedSettings.getChildren().add(vbox);
             settingsFields.add(vbox);
+
+            Helpers.makeChangeToAlgorithm(algoThreadObj.getAlgorithm(), setting.getKey(), setting.getValue());
         }
 
 
@@ -190,6 +192,13 @@ public class Controller {
             datasetDropdown.setDisable(true);
             stepButton.setDisable(true);
             stopButton.setDisable(true);
+            for(javafx.scene.Node vbox : detailedSettings.getChildren())
+            {
+                for(javafx.scene.Node n : ((VBox)vbox).getChildren())
+                {
+                    n.setDisable(true);
+                }
+            }
             if(!started){
                 algoThread.start();
                 started = true;

@@ -142,15 +142,21 @@ public class AlgoObserver implements Observer {
         gc.setFill(Color.BLACK);
         double fitness = algorithm.getCurrentSolution().getFitness();
         int steps = algorithm.getSteps();
-        gc.fillText("Steps: " + steps, 20, 20);
-        gc.fillText("Current solution: " + (fitness == Double.MAX_VALUE ? "Not possible" : fitness), 20, 40);
+
+        int offsetY = 20;
+
+        for(Map.Entry<String,String> info : Helpers.getAlgoInfo(algorithm).entrySet())
+        {
+            gc.fillText(info.getKey() + info.getValue(), 20, offsetY);
+            offsetY+=20;
+        }
 
         if(!algorithm.hasNext())
         {
             gc.setFill(Color.GREEN);
             gc.setFont(new Font(gc.getFont().getName(), 20));
         }
-        gc.fillText("Best solution: " + algorithm.getBestSolution().getFitness(), 20, 60);
+        gc.fillText("Best solution: " + algorithm.getBestSolution().getFitness(), 20, offsetY);
         if(!algorithm.hasNext()) { gc.setFont(defaultFont); }
     }
 

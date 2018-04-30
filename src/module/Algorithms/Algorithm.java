@@ -11,6 +11,7 @@ public abstract class Algorithm extends Observable implements AlgorithmStrategy 
     protected Solution currentSolution;
     protected int steps;
     protected int maxStep;
+    protected int MAX_CAPACITY = 100;
 
     public Algorithm(int maxStep)
     {
@@ -46,5 +47,13 @@ public abstract class Algorithm extends Observable implements AlgorithmStrategy 
 
     public boolean hasNext() {
         return steps < maxStep;
+    }
+
+    public int getMAX_CAPACITY() {
+        return MAX_CAPACITY;
+    }
+
+    public void setMAX_CAPACITY(int MAX_CAPACITY) {
+        this.MAX_CAPACITY = MAX_CAPACITY;
     }
 }

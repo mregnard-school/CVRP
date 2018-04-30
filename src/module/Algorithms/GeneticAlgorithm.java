@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 public class GeneticAlgorithm extends Algorithm {
 
-    private final static int MAX_CAPACITY = 100;
     private final Random random;
     private List<Solution> currentSolutions = new ArrayList<>();
 
