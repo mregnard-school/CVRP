@@ -13,7 +13,6 @@ import javafx.scene.layout.VBox;
 import module.Algorithms.Algorithm;
 import module.Algorithms.SimulatedAnnealing;
 import module.Algorithms.GeneticAlgorithm;
-import module.Algorithms.SimulatedGenetic;
 import module.Node;
 import module.NodeReader;
 import module.exceptions.ComparingException;

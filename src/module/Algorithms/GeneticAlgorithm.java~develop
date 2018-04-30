@@ -11,14 +11,12 @@ import java.util.stream.Collectors;
 
 public class GeneticAlgorithm extends Algorithm {
 
-    private final int maxStep;
-    private final static int MAX_CAPACITY = 100;
     private final Random random;
     private List<Solution> currentSolutions = new ArrayList<>();
 
     public GeneticAlgorithm(int maxStep, List<Node> nodes) {
+        super(maxStep);
         this.steps = 0;
-        this.maxStep = maxStep;
         this.random = Helpers.random;
         initializeAPathByNode(nodes);
     }
@@ -191,12 +189,6 @@ public class GeneticAlgorithm extends Algorithm {
             setChanged();
             notifyObservers();
         }
-    }
-
-    @Override
-    public boolean hasNext() {
-        //System.out.println(steps + "<" + maxStep);
-        return steps < maxStep;
     }
 
     @Override
