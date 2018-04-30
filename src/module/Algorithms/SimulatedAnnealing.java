@@ -11,19 +11,14 @@ import module.utils.Helpers;
 import java.util.*;
 
 public class SimulatedAnnealing extends Algorithm {
-
-    private final int maxStep;
     private final Random random;
     private double currentTemperature;
-    private final double mu;
-
-
-    private final static int MAX_CAPACITY = 100;
+    private double mu;
 
     public SimulatedAnnealing(int maxStep, List<Node> paths) {
+        super(maxStep);
         initialize(paths);
         steps = 0;
-        this.maxStep = maxStep;
         random = Helpers.random;
         mu = 0.99999999;
         initializeTemperature();
@@ -49,8 +44,6 @@ public class SimulatedAnnealing extends Algorithm {
     }
 
     private void initializeTemperature() {
-        //Gives 100 for 30 nodes and 500 for 60 nodes
-        currentTemperature = currentSolution.getPaths().size() * 10 / 3;
         currentTemperature = 10;
     }
 
@@ -127,7 +120,24 @@ public class SimulatedAnnealing extends Algorithm {
         return Math.exp(-(secondFitness - firstFitness) / temperature);
     }
 
+    public double getMu() {
+        return mu;
+    }
+
+    public void setMu(double mu) {
+        this.mu = mu;
+    }
+
     public int getSteps() {
         return steps;
+    }
+
+    public double getCurrentTemperature()
+    {
+        return this.currentTemperature;
+    }
+    public void setCurrentTemperature(double temperature)
+    {
+        this.currentTemperature = temperature;
     }
 }

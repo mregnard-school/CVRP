@@ -20,7 +20,6 @@ public class Path {
         this.maxCapacity = maxCapacity;
         this.currentCapacity = 0;
         exceeded = false;
-
     }
 
     public List<Node> getNodesWithWarehouse() {
@@ -43,6 +42,7 @@ public class Path {
             return false;
         }
         nodes.add(node);
+        computeCapacity();
         return true;
     }
 
@@ -117,6 +117,30 @@ public class Path {
                 .collect(joining(";"));
         string += ")";
         return string;
+    }
+
+    public int indexOfPath(List<Node> subNodes)
+    {
+        int offset = 0;
+        boolean found;
+        while(nodes.size() >= subNodes.size()+offset)
+        {
+            found = true;
+            for(int i=0; i<subNodes.size(); i++)
+            {
+                if(!subNodes.get(i).equals(nodes.get(offset+i)))
+                {
+                    found = false;
+                    break;
+                }
+            }
+            if(found)
+            {
+                return offset;
+            }
+            offset++;
+        }
+        return -1;
     }
 
     @Override

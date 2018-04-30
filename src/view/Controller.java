@@ -1,22 +1,30 @@
 package view;
 
+import javafx.beans.Observable;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import module.Algorithms.Algorithm;
 import module.Algorithms.SimulatedAnnealing;
+import module.Algorithms.GeneticAlgorithm;
 import module.Node;
 import module.NodeReader;
 import module.exceptions.ComparingException;
+import module.utils.Helpers;
 import view.Objects.AlgoObserver;
 import view.Objects.AlgoThreadObj;
+import view.Objects.NumberTextField;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Map;
 
 public class Controller {
     private AlgoThreadObj algoThreadObj;
@@ -38,12 +46,17 @@ public class Controller {
     @FXML
     private Button stopButton;
     @FXML
+    private VBox detailedSettings;
+    @FXML
     private TextField maxIterationsInput;
+
+    private List<VBox> settingsFields;
 
     public void initialize() {
         algoDropdown.getItems().addAll(
-                "Simulated Annealing"
+                Helpers.algorithms.keySet()
         );
+
 
         datasetDropdown.getItems().addAll(
                 "data01.txt",
@@ -72,10 +85,10 @@ public class Controller {
     }
 
     private void initializeAlgorithm(Algorithm algorithm, List<Node> nodes) {
-        mapCanvas.prefHeight(750);
-        mapCanvas.prefWidth(750);
-        mapCanvas.setWidth(750);
-        mapCanvas.setHeight(750);
+        //mapCanvas.prefHeight(750);
+        ///mapCanvas.prefWidth(750);
+        ///mapCanvas.setWidth(750);
+        //mapCanvas.setHeight(750);
 
         try{
             int maxWidth = nodes.stream()
@@ -127,14 +140,50 @@ public class Controller {
         algoDropdown.setDisable(false);
         datasetDropdown.setDisable(false);
         List<Node> nodes = NodeReader.getNodes("data/" + datasetDropdown.getValue());
-        initializeAlgorithm(new SimulatedAnnealing(100000, nodes), nodes);
+
+        if(algoDropdown.getValue().equals("Simulated Annealing"))
+        {
+            initializeAlgorithm(new SimulatedAnnealing(1000000, nodes), nodes);
+
+        }
+        else if(algoDropdown.getValue().equals("Genetic Algorithm"))
+        {
+            initializeAlgorithm(new GeneticAlgorithm(10000000, nodes), nodes);
+        }
+
+        detailedSettings.getChildren().clear();
+
+        settingsFields = new ArrayList<>();
+        ObservableList<NumberTextField> oList = FXCollections.observableArrayList(tf -> new Observable[]{tf.textProperty()});
+        oList.addListener((ListChangeListener.Change<? extends NumberTextField> c) -> {
+            while (c.next()) {
+                if (c.wasUpdated()) {
+                    for (int i = c.getFrom(); i < c.getTo(); ++i) {
+                        Helpers.makeChangeToAlgorithm(algoThreadObj.getAlgorithm(), c.getList().get(i).label, c.getList().get(i).getText());
+                        //System.out.println("Updated index: " + i + ", new value: " + c.getList().get(i).getText());
+                    }
+                }
+            }
+        });
+        for(Map.Entry<String,String> setting : Helpers.algoSettings.get(algoDropdown.getValue()).entrySet())
+        {
+            VBox vbox = new VBox();
+                Label label = new Label(setting.getKey());
+                vbox.getChildren().add(label);
+                NumberTextField value = new NumberTextField(setting.getValue());
+                    value.label = setting.getKey();
+                    oList.add(value);
+                vbox.getChildren().add(value);
+            detailedSettings.getChildren().add(vbox);
+            settingsFields.add(vbox);
+
+            Helpers.makeChangeToAlgorithm(algoThreadObj.getAlgorithm(), setting.getKey(), setting.getValue());
+        }
+
+
         started = false;
     }
 
-    @FXML
-    private void setMaxIterations() {
-        System.out.println("Setting max iterations");
-    }
 
     @FXML
     private void playButtonClick(ActionEvent event) {
@@ -143,6 +192,13 @@ public class Controller {
             datasetDropdown.setDisable(true);
             stepButton.setDisable(true);
             stopButton.setDisable(true);
+            for(javafx.scene.Node vbox : detailedSettings.getChildren())
+            {
+                for(javafx.scene.Node n : ((VBox)vbox).getChildren())
+                {
+                    n.setDisable(true);
+                }
+            }
             if(!started){
                 algoThread.start();
                 started = true;

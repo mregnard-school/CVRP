@@ -79,11 +79,11 @@ public class AlgoObserver implements Observer {
             gc.setFill(c);
             gc.setStroke(c);
             gc.setLineWidth(4);
-            gc.strokeLine(350, infoOffsetY, 400, infoOffsetY);
+            gc.strokeLine(450, infoOffsetY, 500, infoOffsetY);
             double distance = path.getDistance();
             String text = "Distance: " + (distance == -1 ? "Not possible" : (Math.round(distance * 10000.0) / 10000.0));
             text += ", Charge: " + path.getCurrentCapacity() + "/" + path.getMaxCapacity();
-            gc.fillText(text, 410, infoOffsetY + 4);
+            gc.fillText(text, 510, infoOffsetY + 4);
             infoOffsetY += 20;
         }
         gc.setLineWidth(oldLineWidth);
@@ -142,15 +142,21 @@ public class AlgoObserver implements Observer {
         gc.setFill(Color.BLACK);
         double fitness = algorithm.getCurrentSolution().getFitness();
         int steps = algorithm.getSteps();
-        gc.fillText("Steps: " + steps, 20, 20);
-        gc.fillText("Current solution: " + (fitness == Double.MAX_VALUE ? "Not possible" : fitness), 20, 40);
+
+        int offsetY = 20;
+
+        for(Map.Entry<String,String> info : Helpers.getAlgoInfo(algorithm).entrySet())
+        {
+            gc.fillText(info.getKey() + info.getValue(), 20, offsetY);
+            offsetY+=20;
+        }
 
         if(!algorithm.hasNext())
         {
             gc.setFill(Color.GREEN);
             gc.setFont(new Font(gc.getFont().getName(), 20));
         }
-        gc.fillText("Best solution: " + algorithm.getBestSolution().getFitness(), 20, 60);
+        gc.fillText("Best solution: " + algorithm.getBestSolution().getFitness(), 20, offsetY);
         if(!algorithm.hasNext()) { gc.setFont(defaultFont); }
     }
 
@@ -159,7 +165,9 @@ public class AlgoObserver implements Observer {
         Algorithm algo = (Algorithm) o;
 
         int steps = algo.getSteps();
-        if(displayNextStep || steps % 1000 == 0) {
+        int a = (algo.getMaxStep()/500);
+        a = (a == 0 ? 1 : a);
+        if(displayNextStep || steps % a == 0) {
            display(algo);
            displayNextStep = false;
         }
