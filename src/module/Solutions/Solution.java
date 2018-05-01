@@ -2,6 +2,7 @@ package module.Solutions;
 
 import module.Path;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -10,7 +11,7 @@ public class Solution {
     private Set<Path> paths;
     private double fitness;
     private boolean valid;
-
+    private double nbNodes;
     NeighbourStrategy neighbourStrategy;
 
     public Solution(Set<Path> paths, NeighbourStrategy neighbourStrategy) {
@@ -18,11 +19,26 @@ public class Solution {
         this.neighbourStrategy = neighbourStrategy;
         this.valid = true;
         this.fitness = computeFitness();
+        nbNodes = paths.stream().mapToInt(path -> path.getNodes().size()).sum();
+    }
+
+    public Solution(Solution solution) {
+        this.neighbourStrategy = solution.getNeighbourStrategy();
+        this.valid = true;
+        this.paths = new HashSet<>();
+
+        for(Path path : solution.paths) {
+            this.paths.add(new Path(path));
+        }
+
+        //solution.paths.forEach(path -> this.paths.add(new Path(path)));
+        this.fitness = computeFitness();
     }
 
     private double computeFitness() {
         double fitness = 0;
         for(Path path : paths){
+            path.recompute();
             if(path.hasExceeded()){
                 valid = false;
                 return Double.MAX_VALUE;
@@ -64,8 +80,27 @@ public class Solution {
         return paths;
     }
 
+    public void setPaths(Set<Path> paths) {
+        this.paths = paths;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hashCode(paths);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if( obj == null) {
+            return false;
+        }
+        if (obj instanceof Solution) {
+            Solution other = (Solution) obj;
+            return this.paths.equals(other.paths);
+        }
+
+        return false;
+    }
+
+
 }

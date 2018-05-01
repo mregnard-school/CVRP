@@ -148,7 +148,7 @@ public class Controller {
         }
         else if(algoDropdown.getValue().equals("Genetic Algorithm"))
         {
-            initializeAlgorithm(new GeneticAlgorithm(10000000, nodes), nodes);
+            initializeAlgorithm(new GeneticAlgorithm(100000, nodes), nodes);
         }
 
         detailedSettings.getChildren().clear();

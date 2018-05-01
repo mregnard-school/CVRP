@@ -1,14 +1,16 @@
 package module.Algorithms;
 
 import module.Node;
-import module.Path;
 import module.Solutions.Solution;
 import module.Solutions.StealNeighbour;
 import module.Solutions.SwapNeighbor;
 import module.Solutions.SwapSameNeighbourhood;
 import module.utils.Helpers;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 public class SimulatedAnnealing extends Algorithm {
     private final Random random;
@@ -22,25 +24,6 @@ public class SimulatedAnnealing extends Algorithm {
         random = Helpers.random;
         mu = 0.99999999;
         initializeTemperature();
-    }
-
-    @Override
-    public void initialize(List<Node> nodes) {
-        Set<Path> paths = new HashSet<>();
-        Node warehouse = nodes.get(0);
-        nodes.stream().skip(1).forEach(node -> {
-            Path path = new Path(MAX_CAPACITY);
-            path.addNode(warehouse);
-            path.addNode(node);
-            paths.add(path);
-        });
-
-        paths.forEach(path -> {
-            path.addNode(warehouse);
-            path.recompute();
-        });
-        currentSolution = new Solution(paths, new SwapNeighbor());
-        bestSolution = currentSolution;
     }
 
     private void initializeTemperature() {

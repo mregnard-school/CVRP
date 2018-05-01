@@ -22,13 +22,19 @@ public class Path {
         exceeded = false;
     }
 
+    public Path(Path path) {
+        this(path.getMaxCapacity());
+        path.nodes.forEach(node -> this.nodes.add(new Node(node)));
+        recompute();
+    }
+
     public List<Node> getNodesWithWarehouse() {
         return nodes;
     }
 
     public List<Node> getNodes() {
         if (nodes.isEmpty()) {
-            return new ArrayList<>(nodes);
+            return new ArrayList<>();
         }
         return nodes.subList(1, nodes.size() - 1);
     }
@@ -46,6 +52,10 @@ public class Path {
         return true;
     }
 
+
+    public boolean contains(Node node) {
+        return this.nodes.contains(node);
+    }
     public void addAllNodes(Collection<Node> nodes) {
         this.nodes.addAll(nodes);
     }
