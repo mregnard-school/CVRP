@@ -28,10 +28,11 @@ public class Helpers {
                 {
                     put("Max iterations", "10000");
                     put("Max capacity for each truck", "100");
-                    put("Best Selection Rate", "0.2");
-                    put("Crossover Rate", "0.7");
-                    put("Mutation Rate", "0.8");
-                    put("Population Size", "10");
+                    put("Best Selection Rate", "0.4");
+                    put("Crossover Rate", "0.6");
+                    put("Mutation Rate", "0.2");
+                    put("Population Size", "200");
+                
                 }
             });
             put("Simulated Annealing", new LinkedHashMap<String,String>() {
