@@ -304,6 +304,7 @@ public class GeneticAlgorithm extends Algorithm {
 
     public void setPopulationSize(int populationSize) {
         this.populationSize = populationSize;
+        initialize(nodes);
     }
 
     public double getBestSelectionRate() {
