@@ -26,13 +26,19 @@ public class Solution {
         this.neighbourStrategy = solution.getNeighbourStrategy();
         this.valid = true;
         this.paths = new HashSet<>();
-        solution.paths.forEach(path -> this.paths.add(new Path(path)));
+
+        for(Path path : solution.paths) {
+            this.paths.add(new Path(path));
+        }
+
+        //solution.paths.forEach(path -> this.paths.add(new Path(path)));
         this.fitness = computeFitness();
     }
 
     private double computeFitness() {
         double fitness = 0;
         for(Path path : paths){
+            path.recompute();
             if(path.hasExceeded()){
                 valid = false;
                 return Double.MAX_VALUE;

@@ -12,8 +12,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.joining;
-
 public class GeneticAlgorithm extends Algorithm {
     private final Random random;
     private int populationSize;
@@ -29,10 +27,10 @@ public class GeneticAlgorithm extends Algorithm {
         this.nodes = nodes;
         this.steps = 0;
         this.random = Helpers.random;
-        bestSelectionRate = 0.2;
-        crossoverRate = 0.7;
+        bestSelectionRate = 0.1;
+        crossoverRate = 0.9;
         randomRate = 1 - crossoverRate - bestSelectionRate;
-        mutationRate = 0.8;
+        mutationRate = 0.4;
         populationSize = 10;
         currentPopulation = new ArrayList<>();
         initialize(nodes);
@@ -89,7 +87,6 @@ public class GeneticAlgorithm extends Algorithm {
     public void next() {
         if (hasNext()) {
             steps++;
-            System.out.println(steps);
 
             List<Solution> newPopulation = new ArrayList<>(selection());
 
@@ -117,7 +114,7 @@ public class GeneticAlgorithm extends Algorithm {
     private List<Solution> selectBestPercentage() {
         List<Solution> bests = new ArrayList<>();
         int nb = (int) (bestSelectionRate * currentPopulation.size());
-        currentPopulation.sort(Comparator.comparing(Solution::getFitness, Comparator.reverseOrder()));
+        currentPopulation.sort(Comparator.comparing(Solution::getFitness));
         currentPopulation.stream()
                 .limit(nb)
                 .forEach(best -> bests.add(new Solution(best)));
@@ -130,9 +127,6 @@ public class GeneticAlgorithm extends Algorithm {
         while (offsprings.size() < nb) {
             Solution firstParent = roulette();
             Solution secondParent = roulette();
-
-            
-
             Solution offspring = crossover(firstParent, secondParent);
             offsprings.add(offspring);
         }
@@ -150,35 +144,6 @@ public class GeneticAlgorithm extends Algorithm {
         return randoms;
     }
 
-    private Solution roulette2() {
-        List<Double> cummulatedDesc = new ArrayList<>();
-        currentPopulation.sort(Comparator.comparing(Solution::getFitness, Comparator.reverseOrder()));
-        System.out.println(currentPopulation.stream()
-                .map(Solution::getFitness)
-                .map(value -> Double.toString(value))
-                .collect(joining(",")));
-
-        Iterator<Solution> iterator = currentPopulation.iterator();
-        cummulatedDesc.add(iterator.next().getFitness());
-        while (iterator.hasNext()) {
-            double fitness = iterator.next().getFitness();
-            cummulatedDesc.add(fitness + cummulatedDesc.get(cummulatedDesc.size() - 1));
-        }
-
-        int maximumCumulated = cummulatedDesc.get(cummulatedDesc.size() - 1).intValue();
-
-        int rand = random.nextInt(maximumCumulated);
-        iterator = currentPopulation.iterator();
-        for (Double value : cummulatedDesc) {
-            Solution solution = iterator.next();
-            if (rand <= value) {
-                return new Solution(solution);
-            }
-        }
-
-        return iterator.next();
-    }
-
     private Solution roulette() {
         double total = currentPopulation.stream().mapToDouble(Solution::getFitness).sum();
         double totalDividende = total * (currentPopulation.size() - 1);
@@ -194,7 +159,7 @@ public class GeneticAlgorithm extends Algorithm {
 
         Solution solution = Helpers.cumulativeSum(probabilities.entrySet().stream()).flatMap(entry -> {
             double proba = entry.getKey();
-            if(rd < proba){
+            if (rd < proba) {
                 return Stream.of(entry.getValue());
             }
             return Stream.empty();
