@@ -56,6 +56,7 @@ public class Helpers {
             info.put("Crossover Rate: ", Double.toString(((GeneticAlgorithm)algo).getCrossoverRate()));
             info.put("Mutation Rate: ", Double.toString(((GeneticAlgorithm)algo).getMutationRate()));
             info.put("Population Size: ", Double.toString(((GeneticAlgorithm)algo).getPopulationSize()));
+            info.put("Quantity: ", Integer.toString(algo.getBestSolution().getPaths().stream().mapToInt(p -> p.getCurrentCapacity()).sum()));
         }
         else if(algo instanceof  SimulatedAnnealing)
         {
