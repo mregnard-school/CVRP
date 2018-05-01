@@ -12,6 +12,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.joining;
+
 public class GeneticAlgorithm extends Algorithm {
     private final Random random;
     private int populationSize;
@@ -87,6 +89,7 @@ public class GeneticAlgorithm extends Algorithm {
     public void next() {
         if (hasNext()) {
             steps++;
+            System.out.println(steps);
 
             List<Solution> newPopulation = new ArrayList<>(selection());
 
@@ -128,6 +131,8 @@ public class GeneticAlgorithm extends Algorithm {
             Solution firstParent = roulette();
             Solution secondParent = roulette();
 
+            
+
             Solution offspring = crossover(firstParent, secondParent);
             offsprings.add(offspring);
         }
@@ -145,9 +150,13 @@ public class GeneticAlgorithm extends Algorithm {
         return randoms;
     }
 
-    private Solution roulette() {
+    private Solution roulette2() {
         List<Double> cummulatedDesc = new ArrayList<>();
         currentPopulation.sort(Comparator.comparing(Solution::getFitness, Comparator.reverseOrder()));
+        System.out.println(currentPopulation.stream()
+                .map(Solution::getFitness)
+                .map(value -> Double.toString(value))
+                .collect(joining(",")));
 
         Iterator<Solution> iterator = currentPopulation.iterator();
         cummulatedDesc.add(iterator.next().getFitness());
@@ -167,7 +176,31 @@ public class GeneticAlgorithm extends Algorithm {
             }
         }
 
-       return iterator.next();
+        return iterator.next();
+    }
+
+    private Solution roulette() {
+        double total = currentPopulation.stream().mapToDouble(Solution::getFitness).sum();
+        double totalDividende = total * (currentPopulation.size() - 1);
+
+        TreeMap<Double, Solution> probabilities = new TreeMap<>();
+
+        currentPopulation.forEach(solution -> {
+            double proba = (total - solution.getFitness()) / totalDividende;
+            probabilities.put(proba, solution);
+        });
+
+        double rd = random.nextDouble();
+
+        Solution solution = Helpers.cumulativeSum(probabilities.entrySet().stream()).flatMap(entry -> {
+            double proba = entry.getKey();
+            if(rd < proba){
+                return Stream.of(entry.getValue());
+            }
+            return Stream.empty();
+        }).findFirst().orElse(probabilities.lastEntry().getValue());
+
+        return solution;
     }
 
     private Solution crossover(Solution firstParent, Solution secondParent) {
@@ -203,7 +236,6 @@ public class GeneticAlgorithm extends Algorithm {
 
                 if (currentPath.contains(node)) {
                     currentPath.getNodes().remove(node);
-                    int mescouilles = 0;
                     break;
                 }
             }
@@ -219,7 +251,6 @@ public class GeneticAlgorithm extends Algorithm {
 
         Set<Path> nonEmpty = new HashSet<>();
         for (Path path : paths) {
-
             if (path.getNodes().size() > 0) {
                 nonEmpty.add(path);
             }
@@ -290,8 +321,7 @@ public class GeneticAlgorithm extends Algorithm {
         return populationSize;
     }
 
-    public void setPopulationSize(int populationSize)
-    {
+    public void setPopulationSize(int populationSize) {
         this.populationSize = populationSize;
     }
 

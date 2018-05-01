@@ -1,5 +1,5 @@
 package module.exceptions;
 
-public class CumulatedException extends Exception {
+public class CumulatedException extends RuntimeException {
 
 }

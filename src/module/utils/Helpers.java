@@ -3,10 +3,10 @@ package module.utils;
 import module.Algorithms.Algorithm;
 import module.Algorithms.GeneticAlgorithm;
 import module.Algorithms.SimulatedAnnealing;
+import module.Solutions.Solution;
 
 import java.util.*;
-
-import static javax.swing.UIManager.put;
+import java.util.stream.Stream;
 
 public class Helpers {
 
@@ -110,5 +110,17 @@ public class Helpers {
             }
         }
         algo.forceGFXUpdate();
+    }
+
+    public static Stream<Map.Entry<Double, Solution>> cumulativeSum(Stream<Map.Entry<Double, Solution>> stream) {
+        List<Double> doubles = new ArrayList<>();
+        doubles.add(0d);
+       return stream.flatMap(entry -> {
+            Map.Entry<Double, Solution> result;
+            double sum = doubles.get(0) + entry.getKey();
+            doubles.set(0, sum);
+            result = new AbstractMap.SimpleEntry<>(sum, entry.getValue());
+            return Stream.of(result);
+        });
     }
 }
