@@ -187,6 +187,9 @@ public class GeneticAlgorithm extends Algorithm {
     }
 
     private Solution crossOverWithTwoDifferent(Solution firstParent, Solution secondParent) {
+
+        int nodeAmount = firstParent.getPaths().stream().mapToInt(p -> p.getCurrentCapacity()).sum();
+
         Solution cloned = new Solution(secondParent);
         Set<Path> paths = new HashSet<>(cloned.getPaths());
         int firstIndex = random.nextInt(firstParent.getPaths().size());
@@ -222,6 +225,19 @@ public class GeneticAlgorithm extends Algorithm {
         }
 
         Solution offspring = new Solution(nonEmpty, new SwapNeighbor());
+
+        if(nodeAmount != offspring.getPaths().stream().mapToInt(p -> p.getCurrentCapacity()).sum())
+        {
+            return firstParent;
+        }
+        /*System.out.print("\nfirst: ");
+        firstParent.getPaths().forEach(p -> {
+            System.out.print(p.getCurrentCapacity() + ", ");
+        });
+        System.out.print("\noffspring: ");
+        offspring.getPaths().forEach(p -> {
+            System.out.print(p.getCurrentCapacity() + ", ");
+        });*/
         return offspring;
     }
 
