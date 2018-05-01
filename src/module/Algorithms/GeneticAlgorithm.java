@@ -27,11 +27,11 @@ public class GeneticAlgorithm extends Algorithm {
         this.nodes = nodes;
         this.steps = 0;
         this.random = Helpers.random;
-        bestSelectionRate = 0.1;
-        crossoverRate = 0.9;
+        bestSelectionRate = 0.4;
+        crossoverRate = 0.6;
         randomRate = 1 - crossoverRate - bestSelectionRate;
-        mutationRate = 0.4;
-        populationSize = 10;
+        mutationRate = 0.2;
+        populationSize = 200;
         currentPopulation = new ArrayList<>();
         initialize(nodes);
     }
@@ -134,16 +134,6 @@ public class GeneticAlgorithm extends Algorithm {
         return offsprings;
     }
 
-    private List<Solution> selectRandom() {
-        List<Solution> randoms = new ArrayList<>();
-        int nb = (int) (randomRate * currentPopulation.size());
-        while (randoms.size() < nb) {
-            randoms.add(createRandomSolution());
-        }
-
-        return randoms;
-    }
-
     private Solution roulette() {
         double total = currentPopulation.stream().mapToDouble(Solution::getFitness).sum();
         double totalDividende = total * (currentPopulation.size() - 1);
@@ -166,6 +156,16 @@ public class GeneticAlgorithm extends Algorithm {
         }).findFirst().orElse(probabilities.lastEntry().getValue());
 
         return solution;
+    }
+
+    private List<Solution> selectRandom() {
+        List<Solution> randoms = new ArrayList<>();
+        int nb = (int) (randomRate * currentPopulation.size());
+        while (randoms.size() < nb) {
+            randoms.add(createRandomSolution());
+        }
+
+        return randoms;
     }
 
     private Solution crossover(Solution firstParent, Solution secondParent) {
@@ -210,11 +210,7 @@ public class GeneticAlgorithm extends Algorithm {
         }
 
         paths.forEach(Path::recompute);
-        Node warehouse = first.getWarehouse();
-        Path newPath = new Path();
-        newPath.addNode(warehouse);
-        first.getNodes().forEach(newPath::addNode);
-        newPath.addNode(warehouse);
+        Path newPath = new Path(first);
         paths.add(newPath);
 
         Set<Path> nonEmpty = new HashSet<>();
@@ -226,19 +222,15 @@ public class GeneticAlgorithm extends Algorithm {
 
         Solution offspring = new Solution(nonEmpty, new SwapNeighbor());
 
-        if(nodeAmount != offspring.getPaths().stream().mapToInt(p -> p.getCurrentCapacity()).sum())
-        {
-            return firstParent;
+        if (offspring.getFitness() < firstParent.getFitness() && offspring.getFitness() < secondParent.getFitness()) {
+            return offspring;
         }
-        /*System.out.print("\nfirst: ");
-        firstParent.getPaths().forEach(p -> {
-            System.out.print(p.getCurrentCapacity() + ", ");
-        });
-        System.out.print("\noffspring: ");
-        offspring.getPaths().forEach(p -> {
-            System.out.print(p.getCurrentCapacity() + ", ");
-        });*/
-        return offspring;
+
+        if(firstParent.getFitness() < secondParent.getFitness()) {
+            return new Solution(firstParent);
+        } else {
+            return new Solution(secondParent);
+        }
     }
 
     private List<Solution> mutations(List<Solution> population) {
