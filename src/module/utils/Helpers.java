@@ -26,13 +26,12 @@ public class Helpers {
         {
             put("Genetic Algorithm", new LinkedHashMap<String,String>() {
                 {
-                    put("Max iterations", "10000");
+                    put("Max iterations", "100000");
                     put("Max capacity for each truck", "100");
                     put("Best Selection Rate", "0.4");
                     put("Crossover Rate", "0.6");
                     put("Mutation Rate", "0.2");
                     put("Population Size", "200");
-                
                 }
             });
             put("Simulated Annealing", new LinkedHashMap<String,String>() {
@@ -56,7 +55,7 @@ public class Helpers {
             info.put("Best Selection Rate: ", Double.toString(((GeneticAlgorithm)algo).getBestSelectionRate()));
             info.put("Crossover Rate: ", Double.toString(((GeneticAlgorithm)algo).getCrossoverRate()));
             info.put("Mutation Rate: ", Double.toString(((GeneticAlgorithm)algo).getMutationRate()));
-            info.put("Population Size: ", Double.toString(((GeneticAlgorithm)algo).getPopulationSize()));
+            info.put("Population Size: ", Integer.toString(((GeneticAlgorithm)algo).getPopulationSize()));
             info.put("Quantity: ", Integer.toString(algo.getBestSolution().getPaths().stream().mapToInt(p -> p.getCurrentCapacity()).sum()));
         }
         else if(algo instanceof  SimulatedAnnealing)

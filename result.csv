@@ -1,6 +1,0 @@
-Temperature,100.0
-Mu,0.9999
-
-Data Set,Iterations,,Test 1,Test 2,Test 3,Test 4,Test 5,Test 6,Test 7,Test 8,Test 9,Test 10,,min,max,avg,median
-data/data01.txt,161173,,892.42,855.14,835.61,868.71,855.55,863.39,855.65,867.01,816.82,807.55
-data/data01.txt,100000,,861.38,822.84,857.09,804.23,889.11,900.29,849.43,874.06,879.11,807.35

@@ -1,4 +1,5 @@
 import module.Algorithms.Algorithm;
+import module.Algorithms.GeneticAlgorithm;
 import module.Algorithms.SimulatedAnnealing;
 import module.Node;
 import module.NodeReader;
@@ -8,9 +9,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class CVRP {
 
@@ -20,14 +19,14 @@ public class CVRP {
 
 
 
-
-
-		String str = getSimulationCSV();
+		//String str = "";
+		//String str = getSimulationCSV();
 		//String str = getAnotherSimulationCSV("data/data01.txt");
 		//String str = differenceTest("data/data01.txt");
+		String str = getSimulationCSVForGenetic();
 		BufferedWriter writer = null;
 		try {
-			writer = new BufferedWriter(new FileWriter("result.csv"));
+			writer = new BufferedWriter(new FileWriter("result2.csv"));
 			writer.write(str);
 
 			writer.close();
@@ -51,7 +50,46 @@ public class CVRP {
 		List<Algorithm> algorithms = new ArrayList<>();
 		sb.append("Iteration,");
 
-		//// ----- /////
+		int maxIterations = 1000;
+
+		sb.append(",Test (BSR: 0.3 | CR: 0.6 | MR: 0.1 | Pop: 150)");
+		GeneticAlgorithm algorithm = new GeneticAlgorithm(maxIterations, NodeReader.getNodes(dataSet));
+		algorithm.setMaxStep(maxIterations);
+		algorithm.setBestSelectionRate(0.3);
+		algorithm.setCrossoverRate(0.6);
+		algorithm.setMutationRate(0.1);
+		algorithm.setPopulationSize(150);
+		algorithms.add(algorithm);
+
+		sb.append(",Test (BSR: 0.3 | CR: 0.6 | MR: 0.3 | Pop: 150)");
+		algorithm = new GeneticAlgorithm(maxIterations, NodeReader.getNodes(dataSet));
+		algorithm.setMaxStep(maxIterations);
+		algorithm.setBestSelectionRate(0.3);
+		algorithm.setCrossoverRate(0.6);
+		algorithm.setMutationRate(0.3);
+		algorithm.setPopulationSize(150);
+		algorithms.add(algorithm);
+
+		sb.append(",Test (BSR: 0.3 | CR: 0.6 | MR: 0.1 | Pop: 200)");
+		algorithm = new GeneticAlgorithm(maxIterations, NodeReader.getNodes(dataSet));
+		algorithm.setMaxStep(maxIterations);
+		algorithm.setBestSelectionRate(0.3);
+		algorithm.setCrossoverRate(0.6);
+		algorithm.setMutationRate(0.1);
+		algorithm.setPopulationSize(200);
+		algorithms.add(algorithm);
+
+		sb.append(",Test (BSR: 0.3 | CR: 0.6 | MR: 0.3 | Pop: 200)");
+		algorithm = new GeneticAlgorithm(maxIterations, NodeReader.getNodes(dataSet));
+		algorithm.setMaxStep(maxIterations);
+		algorithm.setBestSelectionRate(0.3);
+		algorithm.setCrossoverRate(0.6);
+		algorithm.setMutationRate(0.3);
+		algorithm.setPopulationSize(200);
+		algorithms.add(algorithm);
+
+
+		/*//// ----- /////
 		sb.append(",Test (10 | 0.999)");
 		SimulatedAnnealing algorithm = new SimulatedAnnealing(1000000, NodeReader.getNodes(dataSet));
 		algorithm.setMaxStep(1000000);
@@ -122,7 +160,7 @@ public class CVRP {
 		algorithm.setMaxStep(1000000);
 		algorithm.setCurrentTemperature(100);
 		algorithm.setMu(0.9999);
-		algorithms.add(algorithm);
+		algorithms.add(algorithm);*/
 
 		sb.append("\n");
 
@@ -226,27 +264,29 @@ public class CVRP {
 	public static String getSimulationCSV()
 	{
 		List<String> dataSets = new ArrayList<String>(){{
-			add("data/data01.txt");
+			//add("data/data01.txt");
 			//add("data/data02.txt");
 			//add("data/data03.txt");
 			//add("data/data04.txt");
-			//add("data/data05.txt");
+			add("data/data05.txt");
 		}};
 
 		List<Integer> iterations = new ArrayList<Integer>(){{
-			//add(1000);
-			//add(10000);
-			//add(50000);
+			add(1000);
+			add(10000);
+			add(50000);
 			add(100000);
+			add(500000);
 			add(1000000);
+			//add(10000000);
 
 		}};
 
 		StringBuilder sb = new StringBuilder();
 		DecimalFormat format = new DecimalFormat("##.00");
 
-		double temp = 100;
-		double mu = 0.9999;
+		double temp = 44;
+		double mu = 0.99998;
 		sb.append("Temperature,");sb.append(temp);sb.append("\n");
 		sb.append("Mu,");sb.append(mu);sb.append("\n\n");
 		sb.append("Data Set,Iterations,");
@@ -304,5 +344,214 @@ public class CVRP {
 		}
 
 		return sb.toString();
+	}
+
+
+
+	public static String getSimulationCSVForGenetic()
+	{
+		String dataSet = "data/data04.txt";
+		int maxIterations = 1000;
+		int verificationNumber = 5;
+
+		List<List<Algorithm>> algorithms = new ArrayList<>();
+		List<String> algoLabels = new ArrayList<>();
+		DecimalFormat df = new DecimalFormat("##.00");
+
+
+		GeneticAlgorithm algorithm;
+		List<Algorithm> algos;
+
+		List<Map<String,Double>> algoParams = new ArrayList<>();
+		Map<String,Double> algoParamsUnit;
+
+		algoParamsUnit = new HashMap<>();
+		algoParamsUnit.put("BSR", 0.4);
+		algoParamsUnit.put("CR", 0.6);
+		algoParamsUnit.put("MR", 0.3);
+		algoParamsUnit.put("Pop", 100.0);
+		algoParams.add(algoParamsUnit);
+
+		algoParamsUnit = new HashMap<>();
+		algoParamsUnit.put("BSR", 0.4);
+		algoParamsUnit.put("CR", 0.6);
+		algoParamsUnit.put("MR", 0.3);
+		algoParamsUnit.put("Pop", 150.0);
+		algoParams.add(algoParamsUnit);
+
+
+		algoParamsUnit = new HashMap<>();
+		algoParamsUnit.put("BSR", 0.4);
+		algoParamsUnit.put("CR", 0.6);
+		algoParamsUnit.put("MR", 0.3);
+		algoParamsUnit.put("Pop", 200.0);
+		algoParams.add(algoParamsUnit);
+
+
+		algoParamsUnit = new HashMap<>();
+		algoParamsUnit.put("BSR", 0.4);
+		algoParamsUnit.put("CR", 0.6);
+		algoParamsUnit.put("MR", 0.3);
+		algoParamsUnit.put("Pop", 250.0);
+		algoParams.add(algoParamsUnit);
+
+
+		for(Map<String,Double> param : algoParams)
+		{
+			algoLabels.add("Test (BSR: " + df.format(param.get("BSR"))
+					+ " | CR: " + df.format(param.get("CR"))
+					+ " | MR: " + df.format(param.get("MR"))
+					+ " | Pop: " + param.get("Pop").intValue() + ")");
+			algos = new ArrayList<>();
+			for(int i=0; i<verificationNumber; i++)
+			{
+
+				algorithm = new GeneticAlgorithm(maxIterations, NodeReader.getNodes(dataSet));
+				algorithm.setMaxStep(maxIterations);
+				algorithm.setBestSelectionRate(param.get("BSR"));
+				algorithm.setCrossoverRate(param.get("CR"));
+				algorithm.setMutationRate(param.get("MR"));
+				algorithm.setPopulationSize(param.get("Pop").intValue());
+				algos.add(algorithm);
+
+			}
+			algorithms.add(algos);
+		}
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("Data Set: " + dataSet);
+		sb.append("\nIterations: " + maxIterations + "\n\n");
+
+
+		sb.append("Parameters,");
+		for(int i=1; i<=verificationNumber; i++)
+		{
+			sb.append(",Test " + i);
+		}
+
+		sb.append(",,min,max,avg,med");
+
+		sb.append("\n\n");
+
+		int ittNumber = 0;
+
+		while(algorithms.stream().anyMatch(al -> al.stream().anyMatch(a -> a.hasNext())))
+		{
+			ittNumber++;
+			System.out.println(ittNumber + "/" + maxIterations);
+			for(List<Algorithm> algoList : algorithms)
+			{
+				for(Algorithm algo : algoList)
+				{
+					if(algo.hasNext()){algo.next();}
+				}
+			}
+		}
+
+		for(int j=0; j<algorithms.size(); j++)
+		{
+			sb.append(algoLabels.get(j));
+			sb.append(",,");
+			for(Algorithm algo : algorithms.get(j))
+			{
+				sb.append(df.format(algo.getBestSolution().getFitness()));
+				sb.append(",");
+			}
+			sb.append("\n");
+		}
+
+
+		return sb.toString();
+	}
+
+	public void findBest()
+	{
+		int maxIterations = 1000;
+
+		int populationSize = 200;
+		int bestSelectionRate = 10;
+		int crossOverRate = 10;
+		int mutationRate = 10;
+
+		List<Double> test = new ArrayList<>();
+		test.add(0D);
+		test.add(3D);
+		test.add(2D);
+
+		List<List<Double>> bestParams = new ArrayList<>();
+
+		while(populationSize < 201)
+		{
+			bestSelectionRate = 10;
+			crossOverRate = 10;
+			mutationRate = 10;
+			while(bestSelectionRate < 100)
+			{
+				crossOverRate = 10;
+				mutationRate = 10;
+				while(crossOverRate < 100 && bestSelectionRate + crossOverRate <= 100)
+				{
+					mutationRate = 10;
+					while(mutationRate < 100)
+					{
+						GeneticAlgorithm algorithm = new GeneticAlgorithm(maxIterations, NodeReader.getNodes("data/data01.txt"));
+						algorithm.setMaxStep(maxIterations);
+						algorithm.setPopulationSize(populationSize);
+						algorithm.setBestSelectionRate(bestSelectionRate/100);
+						algorithm.setCrossoverRate(crossOverRate/100);
+						algorithm.setMutationRate(mutationRate/100);
+
+						while(algorithm.hasNext())
+						{
+							algorithm.next();
+						}
+						System.out.print("(" + populationSize + ", " + (bestSelectionRate/100D) + ", " + (crossOverRate/100D) + ", " + (mutationRate/100D) + ")");
+						System.out.println(" = " + algorithm.getBestSolution().getFitness());
+
+						if(bestParams.size() < 10 || bestParams.get(bestParams.size()-1).get(4) > algorithm.getBestSolution().getFitness())
+						{
+							List<Double> newResult = new ArrayList<>();
+							newResult.add((double)populationSize);
+							newResult.add(bestSelectionRate/100D);
+							newResult.add(crossOverRate/100D);
+							newResult.add(mutationRate/100D);
+							newResult.add(algorithm.getBestSolution().getFitness());
+
+							if(bestParams.size() < 10)
+							{
+								bestParams.add(newResult);
+							}
+							else
+							{
+								bestParams.set(bestParams.size()-1, newResult);
+							}
+
+
+							bestParams.sort(Comparator.comparingDouble(l -> l.get(4)));
+							System.out.println("new best");
+							System.out.println("the bests are: ");
+							for(List<Double> l : bestParams)
+							{
+								System.out.println("\t" + l.get(0) + ", " + l.get(1) + ", " + l.get(2) + ", " + l.get(3) + " = " + l.get(4));
+							}
+
+						}
+
+						//System.out.println(populationSize + ", " + (bestSelectionRate/100D) + ", " + (crossOverRate/100D) + ", " + (mutationRate/100D));
+						mutationRate+=10;
+					}
+					crossOverRate+=10;
+				}
+				bestSelectionRate+=10;
+			}
+			populationSize+=2;
+		}
+
+
+		System.out.println("the bests are: ");
+		for(List<Double> l : bestParams)
+		{
+			System.out.println("\t" + l.get(0) + ", " + l.get(1) + ", " + l.get(2) + ", " + l.get(3) + " = " + l.get(4));
+		}
 	}
 }
